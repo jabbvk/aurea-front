@@ -10,9 +10,12 @@ import { AssetDashboardResponse, AssetPageResponse } from './models/asset-dashbo
 import { finalize, debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { ActionButton } from '../shared/action-button/action-button';
+import { ErrorState } from '../shared/error-state/error-state';
+
 @Component({
   selector: 'app-asset-dashboard',
-  imports: [CommonModule, Sidebar, NgxEchartsDirective, ReactiveFormsModule],
+  imports: [CommonModule, Sidebar, NgxEchartsDirective, ReactiveFormsModule, ActionButton, ErrorState],
   templateUrl: './asset-dashboard.html',
 })
 export class AssetDashboard implements OnInit {
@@ -158,6 +161,8 @@ export class AssetDashboard implements OnInit {
     const byCategory = this.dashboardData()?.distribution.byCategory || [];
     return {
       tooltip: { trigger: 'item', formatter: '{b}: {d}%' },
+      animationDuration: 1200,
+      animationEasing: 'cubicOut',
       series: [
         {
           name: 'Distribución',
@@ -165,11 +170,20 @@ export class AssetDashboard implements OnInit {
           radius: ['65%', '90%'],
           avoidLabelOverlap: false,
           itemStyle: {
-            borderRadius: 5,
+            borderRadius: 8,
             borderColor: '#fff',
             borderWidth: 2
           },
           label: { show: false },
+          emphasis: {
+            scale: true,
+            scaleSize: 10,
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.2)'
+            }
+          },
           data: byCategory.map(item => ({
             value: item.value,
             name: item.name,
@@ -188,6 +202,8 @@ export class AssetDashboard implements OnInit {
         trigger: 'item',
         formatter: '{b}: {c}%'
       },
+      animationDuration: 1500,
+      animationEasing: 'cubicOut',
       series: [
         {
           type: 'treemap',
@@ -198,17 +214,30 @@ export class AssetDashboard implements OnInit {
             show: true,
             formatter: '{b}\n{c}%',
             fontSize: 11,
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            color: '#fff'
           },
           itemStyle: {
             borderColor: '#fff',
-            borderWidth: 2,
-            borderRadius: 4
+            borderWidth: 1,
+            gapWidth: 2,
+            borderRadius: 6
+          },
+          emphasis: {
+            itemStyle: {
+              borderWidth: 2,
+              borderColor: '#fff',
+              shadowBlur: 10,
+              shadowColor: 'rgba(0,0,0,0.3)'
+            }
           },
           data: byAsset.map(item => ({
             name: item.name,
             value: item.value,
-            itemStyle: { color: item.color }
+            itemStyle: { 
+              color: item.color,
+              borderRadius: 6
+            }
           }))
         }
       ]

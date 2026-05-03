@@ -135,15 +135,29 @@
     }
   </div>
 
-  <!-- Pagar desde Wallet -->
-  <div>
-    <label class="flex items-center space-x-3 cursor-pointer group">
-      <input formControlName="payFromWallet" type="checkbox"
-        class="form-checkbox h-5 w-5 text-primary rounded border-slate-300 dark:border-slate-600 focus:ring-primary/20 transition duration-150 ease-in-out bg-slate-50 dark:bg-[#2a1a1a]" />
-      <span class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-        Descontar del saldo en efectivo
-      </span>
+  <!-- Origen de los Fondos -->
+  <div class="space-y-1">
+    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+      Origen de los fondos
     </label>
-    <p class="text-xs text-slate-400 mt-1 ml-8">Marcar si quieres descontar el importe de tu wallet.</p>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="relative flex cursor-pointer rounded-lg border p-3 focus:outline-none transition-all duration-200"
+        [ngClass]="form.get('paymentSource')?.value === 'wallet' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#2a1a1a] hover:border-slate-300'">
+        <input type="radio" formControlName="paymentSource" value="wallet" class="sr-only">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]" [class.text-primary]="form.get('paymentSource')?.value === 'wallet'">payments</span>
+          <span class="text-xs font-bold" [class.text-primary]="form.get('paymentSource')?.value === 'wallet'">Cuenta Efectivo</span>
+        </div>
+      </label>
+      <label class="relative flex cursor-pointer rounded-lg border p-3 focus:outline-none transition-all duration-200"
+        [ngClass]="form.get('paymentSource')?.value === 'emergency-fund' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#2a1a1a] hover:border-slate-300'">
+        <input type="radio" formControlName="paymentSource" value="emergency-fund" class="sr-only">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]" [class.text-primary]="form.get('paymentSource')?.value === 'emergency-fund'">savings</span>
+          <span class="text-xs font-bold" [class.text-primary]="form.get('paymentSource')?.value === 'emergency-fund'">Fondo Emergencia</span>
+        </div>
+      </label>
+    </div>
+    <p class="text-xs text-slate-400 mt-1">Selecciona de dónde se descontará el importe invertido.</p>
   </div>
 </form>

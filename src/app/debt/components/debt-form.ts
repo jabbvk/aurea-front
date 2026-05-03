@@ -16,6 +16,7 @@ export class DebtForm {
     creditor: [''],
     date: [new Date().toISOString().split('T')[0], [Validators.required]],
     description: [''],
+    source: ['wallet'],
   });
 
   isValid(): boolean {
@@ -34,6 +35,7 @@ export class DebtForm {
       creditor: '',
       date: new Date().toISOString().split('T')[0],
       description: '',
+      source: 'wallet',
     });
   }
 }

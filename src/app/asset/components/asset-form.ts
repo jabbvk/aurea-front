@@ -17,7 +17,6 @@ const ASSET_CLASSES: AssetClassOption[] = [
   { value: 'CRYPTO', label: 'Criptomoneda', searchable: true },
   { value: 'COMMODITY', label: 'Materia Prima', searchable: true },
   { value: 'REAL_ESTATE', label: 'Inmueble', searchable: false },
-  { value: 'CASH', label: 'Efectivo', searchable: false },
 ];
 
 @Component({
@@ -44,7 +43,7 @@ export class AssetForm implements OnInit, OnDestroy {
     ticker: [''],
     purchasePrice: [null as number | null, [Validators.required, Validators.min(0.01)]],
     quantity: [null as number | null, [Validators.required, Validators.min(0.0001)]],
-    payFromWallet: [true],
+    paymentSource: ['wallet'],
   });
 
   get isSearchable(): boolean {
@@ -56,18 +55,13 @@ export class AssetForm implements OnInit, OnDestroy {
     return this.form.get('assetClass')?.value === 'REAL_ESTATE';
   }
 
-  get isCash(): boolean {
-    return this.form.get('assetClass')?.value === 'CASH';
-  }
-
   get priceLabel(): string {
     if (this.isRealEstate) return 'Precio del inmueble';
-    if (this.isCash) return 'Importe';
     return 'Precio por unidad';
   }
 
   get showQuantity(): boolean {
-    return !this.isRealEstate && !this.isCash;
+    return !this.isRealEstate;
   }
 
   ngOnInit(): void {
@@ -101,7 +95,7 @@ export class AssetForm implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
     ).subscribe(() => {
       this.clearSearch();
-      if (this.isRealEstate || this.isCash) {
+      if (this.isRealEstate) {
         this.form.patchValue({ ticker: '', quantity: 1 });
       }
     });
@@ -149,7 +143,7 @@ export class AssetForm implements OnInit, OnDestroy {
   getFormData() {
     const data = this.form.getRawValue();
     // For non-searchable types, quantity is always 1
-    if (this.isRealEstate || this.isCash) {
+    if (this.isRealEstate) {
       data.quantity = 1;
     }
     return data;
@@ -162,7 +156,7 @@ export class AssetForm implements OnInit, OnDestroy {
       ticker: '',
       purchasePrice: null,
       quantity: null,
-      payFromWallet: true,
+      paymentSource: 'wallet',
     });
     this.clearSearch();
   }

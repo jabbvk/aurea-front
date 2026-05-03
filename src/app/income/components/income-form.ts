@@ -83,6 +83,31 @@ import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angula
         </div>
       </div>
 
+      <!-- Destino -->
+      <div class="space-y-1">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+          Destino de los fondos
+        </label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="relative flex cursor-pointer rounded-lg border p-3 focus:outline-none transition-all duration-200"
+            [ngClass]="form.get('destination')?.value === 'wallet' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#2a1a1a] hover:border-slate-300'">
+            <input type="radio" formControlName="destination" value="wallet" class="sr-only">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px]" [class.text-primary]="form.get('destination')?.value === 'wallet'">payments</span>
+              <span class="text-xs font-bold" [class.text-primary]="form.get('destination')?.value === 'wallet'">Cuenta Efectivo</span>
+            </div>
+          </label>
+          <label class="relative flex cursor-pointer rounded-lg border p-3 focus:outline-none transition-all duration-200"
+            [ngClass]="form.get('destination')?.value === 'emergency-fund' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#2a1a1a] hover:border-slate-300'">
+            <input type="radio" formControlName="destination" value="emergency-fund" class="sr-only">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px]" [class.text-primary]="form.get('destination')?.value === 'emergency-fund'">savings</span>
+              <span class="text-xs font-bold" [class.text-primary]="form.get('destination')?.value === 'emergency-fund'">Fondo Emergencia</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
       <!-- Descripción -->
       <div class="space-y-1">
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="income-description">
@@ -124,6 +149,7 @@ export class IncomeForm {
     description: [''],
     category: ['SALARY'],
     frequency: ['ONE_TIME'],
+    destination: ['wallet'],
   });
 
   isValid(): boolean {
@@ -142,6 +168,7 @@ export class IncomeForm {
       description: '',
       category: 'SALARY',
       frequency: 'MONTHLY',
+      destination: 'wallet',
     });
   }
 }

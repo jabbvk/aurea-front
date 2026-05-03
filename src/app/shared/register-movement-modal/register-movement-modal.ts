@@ -1,16 +1,18 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RegisterMovementModalService, MOVEMENT_TABS, MovementTab } from './register-movement-modal.service';
 import { IncomeForm } from '../../income/components/income-form';
 import { ExpenseForm } from '../../expense/components/expense-form';
 import { AssetForm } from '../../asset/components/asset-form';
 import { DebtForm } from '../../debt/components/debt-form';
+import { FundContributionForm } from '../../emergency-fund/components/fund-contribution-form';
+import { CashForm } from './cash-form';
 import { ApiService } from '../../core/services/api.service';
 import { ToastService } from '../toast/toast.service';
 
 @Component({
   selector: 'app-register-movement-modal',
-  imports: [CommonModule, IncomeForm, ExpenseForm, AssetForm, DebtForm],
+  imports: [CommonModule, IncomeForm, ExpenseForm, AssetForm, DebtForm, FundContributionForm, CashForm],
   templateUrl: './register-movement-modal.html',
   styleUrl: './register-movement-modal.css',
 })
@@ -26,6 +28,15 @@ export class RegisterMovementModal {
   @ViewChild(ExpenseForm) expenseForm?: ExpenseForm;
   @ViewChild(AssetForm) assetForm?: AssetForm;
   @ViewChild(DebtForm) debtForm?: DebtForm;
+  @ViewChild(FundContributionForm) fundForm?: FundContributionForm;
+  @ViewChild(CashForm) cashForm?: CashForm;
+
+  @HostListener('window:keydown.escape')
+  onEscape(): void {
+    if (this.modalService.isOpen()) {
+      this.close();
+    }
+  }
 
   close(): void {
     this.modalService.close();
@@ -58,6 +69,16 @@ export class RegisterMovementModal {
       case 'debt':
         if (this.debtForm?.isValid()) {
           this.toast.info('Registro de deudas próximamente.');
+        }
+        break;
+      case 'emergency-fund':
+        if (this.fundForm?.isValid()) {
+          this.submitFundContribution(this.fundForm.getFormData());
+        }
+        break;
+      case 'cash':
+        if (this.cashForm?.isValid()) {
+          this.submitCashMovement(this.cashForm.getFormData());
         }
         break;
     }
@@ -138,10 +159,47 @@ export class RegisterMovementModal {
     });
   }
 
+  private submitFundContribution(data: any): void {
+    this.isSubmitting = true;
+    this.api.post('/aurea/emergency-fund/contributions', {
+      amount: data.amount,
+      description: data.description,
+    }).subscribe({
+      next: () => {
+        this.toast.success('Aportación registrada correctamente.');
+        this.isSubmitting = false;
+        this.modalService.notifyMovementRegistered();
+        this.close();
+      },
+      error: () => {
+        this.toast.error('Error al registrar la aportación.');
+        this.isSubmitting = false;
+      },
+    });
+  }
+
+  private submitCashMovement(data: any): void {
+    this.isSubmitting = true;
+    this.api.post('/aurea/cash/movements', data).subscribe({
+      next: () => {
+        this.toast.success('Movimiento de efectivo registrado.');
+        this.isSubmitting = false;
+        this.modalService.notifyMovementRegistered();
+        this.close();
+      },
+      error: () => {
+        this.toast.error('Error al registrar el movimiento.');
+        this.isSubmitting = false;
+      },
+    });
+  }
+
   private resetForms(): void {
     this.incomeForm?.reset();
     this.expenseForm?.reset();
     this.assetForm?.reset();
     this.debtForm?.reset();
+    this.fundForm?.reset();
+    this.cashForm?.reset();
   }
 }

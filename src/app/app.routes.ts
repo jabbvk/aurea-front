@@ -4,12 +4,16 @@ import { Dashboard } from './dashboard/dashboard';
 import { ErrorPage } from './error/error';
 
 import { AssetDashboard } from './asset/asset-dashboard';
+import { EmergencyFund } from './emergency-fund/emergency-fund';
+import { CashDashboard } from './cash/cash-dashboard';
 import { LegalComponent } from './legal/legal';
 
 export const routes: Routes = [
   { path: '', component: Login },
   { path: 'dashboard', component: Dashboard },
   { path: 'assets', component: AssetDashboard },
+  { path: 'emergency-fund', component: EmergencyFund },
+  { path: 'cash', component: CashDashboard },
   { path: 'help', component: LegalComponent },
   { path: 'privacy', component: LegalComponent },
   { path: 'terms', component: LegalComponent },

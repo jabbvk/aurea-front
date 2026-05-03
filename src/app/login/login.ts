@@ -2,6 +2,7 @@ import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/services/api.service';
+import { ComingSoonService } from '../shared/coming-soon-modal/coming-soon-service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,6 +15,7 @@ export class Login {
   private readonly apiService = inject(ApiService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  readonly comingSoonService = inject(ComingSoonService);
 
   loginForm = this.fb.group({
     email: ['javiertarancon777@gmail.com', [Validators.required, Validators.email]],

@@ -2,182 +2,179 @@
     class="bg-background-light text-slate-900 dark:bg-background-dark dark:text-slate-100 font-display transition-colors duration-200 no-scroll-layout flex">
     <app-sidebar></app-sidebar>
     <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-background-light dark:bg-background-dark">
-        <header class="h-16 shrink-0 flex items-center justify-between px-6 pt-4 pb-2 z-10 border-b border-transparent">
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Patrimonio Neto</h2>
-            <div class="flex items-center gap-3">
-                <button (click)="modalService.open()"
-                    class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-xs font-semibold transition-colors shadow-lg shadow-primary/20 flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-base">add</span>
-                    Registrar Movimiento
-                </button>
+        <header
+            class="sticky top-0 z-20 flex items-center justify-between px-8 py-6 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-transparent dark:border-slate-800">
+            <div class="flex items-center gap-4">
+                <!-- Title removed as requested -->
+            </div>
+            <div class="flex items-center gap-4">
+                <app-action-button label="Registrar Movimiento" (action)="modalService.open()"></app-action-button>
             </div>
         </header>
         <div class="flex-1 px-6 pb-6 pt-4 overflow-y-auto overflow-x-hidden flex flex-col gap-4">
 
             <!-- ── Loading skeleton ── -->
             @if (isLoading() && !data()) {
-            <section class="flex flex-col md:flex-row gap-4 items-end justify-between animate-pulse">
-                <div>
-                    <div class="h-3 w-24 bg-slate-200 dark:bg-slate-700 rounded mb-2"></div>
-                    <div class="h-8 w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
+            <!-- Header Card Skeleton -->
+            <div
+                class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center justify-between animate-pulse">
+                <div class="flex flex-col gap-2">
+                    <div class="h-3 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                    <div class="h-10 w-64 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                    <div class="h-3 w-24 bg-slate-200 dark:bg-slate-700 rounded mt-1"></div>
                 </div>
-                <div class="h-9 w-48 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
-            </section>
-            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 flex-1 min-h-[300px]">
+                <div class="h-10 w-64 bg-slate-100 dark:bg-slate-800 rounded-xl"></div>
+            </div>
+
+            <!-- Main Grid Skeleton (4 cards) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse">
                 @for (i of [1,2,3,4]; track i) {
                 <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm h-44 animate-pulse">
-                    <div class="h-3 w-28 bg-slate-200 dark:bg-slate-700 rounded mb-3"></div>
-                    <div class="h-7 w-20 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm h-48 flex flex-col justify-between">
+                    <div class="flex justify-between">
+                        <div class="flex flex-col gap-2">
+                            <div class="h-3 w-28 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                            <div class="h-8 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded"></div>
+                        <div class="h-2 w-5/6 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                    </div>
                 </div>
                 }
-            </section>
+            </div>
+
+            <!-- Bottom Grid Skeleton (2 cards) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse pb-4">
+                @for (i of [1,2]; track i) {
+                <div
+                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm h-32 flex flex-col justify-between">
+                    <div class="flex justify-between">
+                        <div class="flex flex-col gap-2">
+                            <div class="h-3 w-28 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                            <div class="h-7 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+                    </div>
+                </div>
+                }
+            </div>
             }
 
             <!-- ── Error state ── -->
             @if (hasError() && !data()) {
-            <section class="flex-1 flex items-center justify-center">
-                <div class="text-center">
-                    <span class="material-symbols-outlined text-4xl text-slate-400 mb-2 block">cloud_off</span>
-                    <p class="text-slate-500 text-sm mb-3">No se pudieron cargar los datos del dashboard.</p>
-                    <button (click)="selectPeriod(selectedPeriod())"
-                        class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-xs font-semibold transition-colors">
-                        Reintentar
-                    </button>
-                </div>
+            <section class="flex-1 flex items-center justify-center min-h-[400px]">
+                <app-error-state title="Error al cargar los datos"
+                    message="No hemos podido conectar con el servidor para cargar el dashboard. Por favor, inténtalo de nuevo más tarde."
+                    (retry)="loadDashboard()">
+                </app-error-state>
             </section>
             }
 
             <!-- ── Dashboard content ── -->
             @if (data(); as d) {
-            <section class="flex flex-col md:flex-row gap-4 items-end justify-between" [class.opacity-60]="isLoading()"
-                [class.pointer-events-none]="isLoading()">
-                <div>
-                    <p class="text-xs font-medium text-slate-500 mb-0.5">Patrimonio Total</p>
-                    <div class="flex items-baseline gap-3">
-                        <h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <section
+                class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                <div class="flex flex-col">
+                    <p class="text-[13px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Patrimonio Neto Total
+                    </p>
+                    <div class="flex items-center gap-3">
+                        @if (isLoading()) {
+                        <div class="h-9 w-48 bg-slate-200 dark:bg-slate-700 animate-pulse rounded my-1"></div>
+                        } @else {
+                        <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                             {{ d.netWorth | currency:'EUR':'symbol':'1.2-2' }}
                         </h1>
-                        <div class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold"
-                            [ngClass]="{
-                                'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400': isPositiveChange(),
-                                'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400': !isPositiveChange()
-                            }">
-                            <span class="material-symbols-outlined text-xs">
+                        <div class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold" [ngClass]="{
+                                    'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400': isPositiveChange(),
+                                    'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400': !isPositiveChange()
+                                }">
+                            <span class="material-symbols-outlined text-[16px]">
                                 {{ isPositiveChange() ? 'trending_up' : 'trending_down' }}
                             </span>
-                            {{ isPositiveChange() ? '+' : '' }}{{ netWorthChange() | number:'1.1-1' }}% {{ periodLabel()
-                            }}
+                            {{ isPositiveChange() ? '+' : '' }}{{ netWorthChange() | number:'1.1-1' }}%
                         </div>
+                        }
                     </div>
+                    <p class="text-[11px] text-slate-400 mt-1 font-medium italic">Referencia: {{ periodLabel() }}</p>
                 </div>
+
                 <div
-                    class="bg-white dark:bg-[#2a1a1a] p-1 rounded-lg border border-slate-200 dark:border-slate-700 flex text-[11px] font-medium shadow-sm">
+                    class="bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center gap-1 shadow-inner">
                     @for (option of periodOptions; track option.value) {
-                    <button (click)="selectPeriod(option.value)" class="px-2.5 py-1 rounded transition-colors"
-                        [ngClass]="{
-                            'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white shadow-sm font-semibold': selectedPeriod() === option.value,
-                            'hover:bg-slate-50 dark:hover:bg-white/5 text-slate-500': selectedPeriod() !== option.value
+                    <button (click)="selectPeriod(option.value)"
+                        class="px-4 py-2 rounded-lg text-[11px] font-bold transition-all duration-200" [ngClass]="{
+                            'bg-white dark:bg-slate-700 text-primary dark:text-white shadow-md transform scale-105': selectedPeriod() === option.value,
+                            'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-white/5': selectedPeriod() !== option.value
                         }">
                         {{ option.label }}
                     </button>
                     }
                 </div>
             </section>
-            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 flex-1 min-h-[300px]"
-                [class.opacity-60]="isLoading()" [class.pointer-events-none]="isLoading()">
-                <!-- Ingresos del Periodo -->
-                <article
+
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-4 h-auto shrink-0">
+                <!-- Saldo en efectivo -->
+                <article routerLink="/cash"
                     class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
-                    <div class="flex justify-between items-start mb-4">
+                    <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-slate-500 text-[13px] font-medium">Ingresos del Periodo</p>
+                            <p class="text-slate-500 text-[13px] font-medium">Saldo en efectivo</p>
                             <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.periodIncome | currency:'EUR':'symbol':'1.0-0' }}
+                                {{ d.cashBalance | currency:'EUR':'symbol':'1.0-0' }}
                             </h3>
                         </div>
                         <div
-                            class="h-8 w-8 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                            <span class="material-symbols-outlined text-lg">payments</span>
+                            class="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
+                            <span class="material-symbols-outlined text-lg">account_balance_wallet</span>
                         </div>
-                    </div>
-                    <div class="mt-auto flex-1 overflow-hidden pr-1">
-                        @if (!d.recentIncomes || d.recentIncomes.length === 0) {
-                        <div class="flex flex-col items-center justify-center py-6 text-center">
-                            <span
-                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-3xl mb-2">receipt_long</span>
-                            <p class="text-xs text-slate-500 font-medium">No hay ingresos recientes</p>
-                        </div>
-                        } @else {
-                        <div class="space-y-3">
-                            @for (income of d.recentIncomes; track income.id) {
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="h-8 w-8 rounded bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
-                                        <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
-                                    </div>
-                                    <div>
-                                        <p class="text-[12px] font-semibold text-slate-900 dark:text-white">{{
-                                            income.source }}</p>
-                                        <p class="text-[10px] text-slate-400">{{ income.date | date:'dd MMM, yyyy' }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <span class="text-[12px] font-bold text-emerald-600 dark:text-emerald-400">+{{
-                                    income.amount | currency:'EUR':'symbol':'1.2-2' }}</span>
-                            </div>
-                            }
-                        </div>
-                        }
                     </div>
                 </article>
-                <!-- Gastos del Periodo -->
-                <article
+                <!-- Fondo de emergencia -->
+                <article routerLink="/emergency-fund"
                     class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <p class="text-slate-500 text-[13px] font-medium">Gastos del Periodo</p>
+                            <p class="text-slate-500 text-[13px] font-medium">Fondo de emergencia</p>
                             <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.periodExpenses | currency:'EUR':'symbol':'1.0-0' }}
+                                {{ d.emergencyFundBalance | currency:'EUR':'symbol':'1.0-0' }}
                             </h3>
                         </div>
                         <div
-                            class="h-8 w-8 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-primary">
-                            <span class="material-symbols-outlined text-lg">credit_card</span>
+                            class="h-8 w-8 rounded-full bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                            <span class="material-symbols-outlined text-lg">shield</span>
                         </div>
                     </div>
-                    <div class="mt-auto flex-1 overflow-hidden pr-1">
-                        @if (!d.recentExpenses || d.recentExpenses.length === 0) {
-                        <div class="flex flex-col items-center justify-center py-6 text-center">
-                            <span
-                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-3xl mb-2">receipt</span>
-                            <p class="text-xs text-slate-500 font-medium">No hay gastos recientes</p>
-                        </div>
-                        } @else {
-                        <div class="space-y-3">
-                            @for (expense of d.recentExpenses; track expense.id) {
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="h-8 w-8 rounded bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
-                                        <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
-                                    </div>
-                                    <div>
-                                        <p class="text-[12px] font-semibold text-slate-900 dark:text-white">{{
-                                            expense.description }}</p>
-                                        <p class="text-[10px] text-slate-400">{{ expense.date | date:'dd MMM, yyyy' }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <span class="text-[12px] font-bold text-slate-900 dark:text-white">-{{ expense.amount |
-                                    currency:'EUR':'symbol':'1.2-2' }}</span>
+
+                    @if (d.periodExpenses > 0) {
+                    @let runwayMonths = d.emergencyFundBalance / d.periodExpenses;
+                    <div class="mt-auto">
+                        <div class="flex justify-between text-xs text-slate-500 mb-1.5">
+                            <span class="font-medium">Meses cubiertos</span>
+                            <div>
+                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ runwayMonths |
+                                    number:'1.1-1' }}</span>
+                                <span class="text-[10px]"> / 12 meses</span>
                             </div>
-                            }
                         </div>
-                        }
+                        <div class="h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-indigo-500 rounded-full transition-all duration-500"
+                                [style.width.%]="(runwayMonths / 12) * 100 > 100 ? 100 : (runwayMonths / 12) * 100">
+                            </div>
+                        </div>
                     </div>
+                    } @else {
+                    <div class="mt-auto">
+                        <p class="text-xs text-slate-400 text-center">Registra gastos para calcular tu runway</p>
+                    </div>
+                    }
                 </article>
+
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 flex-1 min-h-[300px]">
                 <!-- Activos -->
                 <article routerLink="/assets"
                     class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
@@ -225,6 +222,80 @@
                         }
                     </div>
                 </article>
+                <!-- Ingresos-->
+                <article
+                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-slate-500 text-[13px] font-medium">Ingresos</p>
+                            @if (isLoading()) {
+                            <div class="h-8 w-32 bg-slate-100 dark:bg-slate-800 animate-pulse rounded mt-1"></div>
+                            } @else {
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+                                {{ d.periodIncome | currency:'EUR':'symbol':'1.0-0' }}
+                            </h3>
+                            }
+                        </div>
+                        <div
+                            class="h-8 w-8 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                            <span class="material-symbols-outlined text-lg">payments</span>
+                        </div>
+                    </div>
+                    <div class="mt-auto flex-1 overflow-hidden pr-1">
+                        @if (isLoading()) {
+                        <div class="space-y-4 animate-pulse py-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 rounded bg-slate-100 dark:bg-slate-800"></div>
+                                    <div class="space-y-2">
+                                        <div class="h-2.5 w-24 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                        <div class="h-2 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                    </div>
+                                </div>
+                                <div class="h-3 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 rounded bg-slate-100 dark:bg-slate-800"></div>
+                                    <div class="space-y-2">
+                                        <div class="h-2.5 w-20 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                        <div class="h-2 w-12 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                    </div>
+                                </div>
+                                <div class="h-3 w-12 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                            </div>
+                        </div>
+                        } @else if (!d.recentIncomes || d.recentIncomes.length === 0) {
+                        <div class="flex flex-col items-center justify-center py-6 text-center">
+                            <span
+                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-3xl mb-2">receipt_long</span>
+                            <p class="text-xs text-slate-500 font-medium">No hay ingresos recientes</p>
+                        </div>
+                        } @else {
+                        <div class="space-y-3">
+                            @for (income of d.recentIncomes; track income.id) {
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="h-8 w-8 rounded bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                                        <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-[12px] font-semibold text-slate-900 dark:text-white">{{
+                                            income.source }}</p>
+                                        <p class="text-[10px] text-slate-400">{{ income.date | date:'dd MMM, yyyy' }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <span class="text-[12px] font-bold text-emerald-600 dark:text-emerald-400">+{{
+                                    income.amount | currency:'EUR':'symbol':'1.2-2' }}</span>
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                </article>
+
                 <!-- Deuda -->
                 <article
                     class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
@@ -270,61 +341,77 @@
                         }
                     </div>
                 </article>
-            </section>
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-4 h-auto shrink-0 pb-4">
-                <!-- Fondo de Emergencia -->
+                <!-- Gastos-->
                 <article
                     class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <p class="text-slate-500 text-[13px] font-medium">Fondo de Emergencia</p>
+                            <p class="text-slate-500 text-[13px] font-medium">Gastos</p>
+                            @if (isLoading()) {
+                            <div class="h-8 w-32 bg-slate-100 dark:bg-slate-800 animate-pulse rounded mt-1"></div>
+                            } @else {
                             <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.emergencyFundBalance | currency:'EUR':'symbol':'1.0-0' }}
+                                {{ d.periodExpenses | currency:'EUR':'symbol':'1.0-0' }}
                             </h3>
+                            }
                         </div>
                         <div
-                            class="h-8 w-8 rounded-full bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                            <span class="material-symbols-outlined text-lg">shield</span>
+                            class="h-8 w-8 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-lg">credit_card</span>
                         </div>
                     </div>
-
-                    @if (d.periodExpenses > 0) {
-                    @let runwayMonths = d.emergencyFundBalance / d.periodExpenses;
-                    <div class="mt-auto">
-                        <div class="flex justify-between text-xs text-slate-500 mb-1.5">
-                            <span class="font-medium">Meses cubiertos</span>
-                            <div>
-                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ runwayMonths |
-                                    number:'1.1-1' }}</span>
-                                <span class="text-[10px]"> / 12 meses</span>
+                    <div class="mt-auto flex-1 overflow-hidden pr-1">
+                        @if (isLoading()) {
+                        <div class="space-y-4 animate-pulse py-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 rounded bg-slate-100 dark:bg-slate-800"></div>
+                                    <div class="space-y-2">
+                                        <div class="h-2.5 w-24 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                        <div class="h-2 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                    </div>
+                                </div>
+                                <div class="h-3 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 rounded bg-slate-100 dark:bg-slate-800"></div>
+                                    <div class="space-y-2">
+                                        <div class="h-2.5 w-20 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                        <div class="h-2 w-12 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                    </div>
+                                </div>
+                                <div class="h-3 w-12 bg-slate-100 dark:bg-slate-800 rounded"></div>
                             </div>
                         </div>
-                        <div class="h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                            <div class="h-full bg-indigo-500 rounded-full transition-all duration-500"
-                                [style.width.%]="(runwayMonths / 12) * 100 > 100 ? 100 : (runwayMonths / 12) * 100">
+                        } @else if (!d.recentExpenses || d.recentExpenses.length === 0) {
+                        <div class="flex flex-col items-center justify-center py-6 text-center">
+                            <span
+                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-3xl mb-2">receipt</span>
+                            <p class="text-xs text-slate-500 font-medium">No hay gastos recientes</p>
+                        </div>
+                        } @else {
+                        <div class="space-y-3">
+                            @for (expense of d.recentExpenses; track expense.id) {
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="h-8 w-8 rounded bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                                        <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-[12px] font-semibold text-slate-900 dark:text-white">{{
+                                            expense.description }}</p>
+                                        <p class="text-[10px] text-slate-400">{{ expense.date | date:'dd MMM, yyyy' }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <span class="text-[12px] font-bold text-slate-900 dark:text-white">-{{ expense.amount |
+                                    currency:'EUR':'symbol':'1.2-2' }}</span>
                             </div>
+                            }
                         </div>
-                    </div>
-                    } @else {
-                    <div class="mt-auto">
-                        <p class="text-xs text-slate-400 text-center">Registra gastos para calcular tu runway</p>
-                    </div>
-                    }
-                </article>
-                <!-- Saldo en Efectivo -->
-                <article
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-slate-500 text-[13px] font-medium">Saldo en Efectivo</p>
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.cashBalance | currency:'EUR':'symbol':'1.0-0' }}
-                            </h3>
-                        </div>
-                        <div
-                            class="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
-                            <span class="material-symbols-outlined text-lg">account_balance_wallet</span>
-                        </div>
+                        }
                     </div>
                 </article>
             </section>

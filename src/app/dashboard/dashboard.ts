@@ -11,9 +11,12 @@ import {
   PERIOD_OPTIONS,
 } from './models/dashboard.model';
 
+import { ActionButton } from '../shared/action-button/action-button';
+import { ErrorState } from '../shared/error-state/error-state';
+
 @Component({
   selector: 'app-dashboard',
-  imports: [Sidebar, CommonModule, CurrencyPipe, DecimalPipe, RouterLink],
+  imports: [Sidebar, CommonModule, CurrencyPipe, DecimalPipe, RouterLink, ActionButton, ErrorState],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -70,7 +73,7 @@ export class Dashboard implements OnInit, OnDestroy {
     this.loadDashboard();
   }
 
-  private loadDashboard(): void {
+  loadDashboard(): void {
     this.isLoading.set(true);
     this.hasError.set(false);
 

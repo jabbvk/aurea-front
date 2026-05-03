@@ -1,11 +1,17 @@
 @if (modalService.isOpen()) {
 <div class="modal-backdrop" (click)="onBackdropClick($event)">
-  <div class="modal-panel">
+  <div class="modal-panel" [class.max-w-md]="modalService.hideTabs() || modalService.activeTab() === 'cash'">
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
       <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary">add_circle</span>
-        Registrar Movimiento
+        <span class="material-symbols-outlined text-primary">
+          @if (modalService.activeTab() === 'emergency-fund') { savings }
+          @else if (modalService.activeTab() === 'cash') { payments }
+          @else { add_circle }
+        </span>
+        @if (modalService.activeTab() === 'emergency-fund') { Aportar al Fondo de Emergencia }
+        @else if (modalService.activeTab() === 'cash') { Gestión de Efectivo }
+        @else { Registrar Movimiento }
       </h3>
       <button (click)="close()"
         class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors rounded-full p-1 hover:bg-slate-100 dark:hover:bg-white/5">
@@ -16,9 +22,10 @@
     <!-- Body -->
     <div class="p-6 overflow-y-auto">
       <!-- Tabs -->
+      @if (!modalService.hideTabs()) {
       <div class="mb-8">
         <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Tipo de Transacción</label>
-        <div class="grid grid-cols-4 gap-1 p-1 bg-slate-100 dark:bg-slate-800/50 rounded-lg">
+        <div class="grid grid-cols-5 gap-1 p-1 bg-slate-100 dark:bg-slate-800/50 rounded-lg">
           @for (tab of tabs; track tab.value) {
             <button
               (click)="selectTab(tab.value)"
@@ -32,6 +39,7 @@
           }
         </div>
       </div>
+      }
 
       <!-- Form content -->
       @switch (modalService.activeTab()) {
@@ -39,6 +47,8 @@
         @case ('expense') { <app-expense-form /> }
         @case ('asset') { <app-asset-form /> }
         @case ('debt') { <app-debt-form /> }
+        @case ('emergency-fund') { <app-fund-contribution-form /> }
+        @case ('cash') { <app-cash-form /> }
       }
     </div>
 
