@@ -1,0 +1,43 @@
+<div class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display">
+    <!-- Header -->
+    <header class="w-full px-6 lg:px-8 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark sticky top-0 z-10 backdrop-blur-md bg-white/90 dark:bg-background-dark/90">
+        <div class="flex items-center gap-2 text-primary cursor-pointer" routerLink="/">
+            <div class="size-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary" style="font-size: 20px;">shield_person</span>
+            </div>
+            <h1 class="text-slate-900 dark:text-slate-100 text-lg font-bold tracking-tight">Aurea</h1>
+        </div>
+        <a routerLink="/" class="text-xs font-bold text-slate-500 hover:text-primary transition-colors flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            Volver al inicio
+        </a>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-grow py-12 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 lg:p-12 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800">
+                <h1 class="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-8">{{ title() }}</h1>
+                
+                <div class="space-y-6">
+                    @for (paragraph of content(); track $index) {
+                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                            {{ paragraph }}
+                        </p>
+                    }
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-slate-100 dark:border-slate-800">
+                    <p class="text-xs text-slate-400 dark:text-slate-600">
+                        Última actualización: Mayo 2024. Este documento es de carácter informativo y forma parte de los servicios públicos de Aurea Fintech.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-6 px-6 text-center text-slate-400 dark:text-slate-600 text-[10px] border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark">
+        © 2024 Aurea Fintech. Todos los derechos reservados.
+    </footer>
+</div>
