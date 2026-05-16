@@ -10,6 +10,10 @@ export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
 
+  getBaseUrl(): string {
+    return this.baseUrl;
+  }
+
   get<T>(endpoint: string, params?: Record<string, any>): Observable<T> {
     let httpParams = new HttpParams();
     if (params) {
@@ -28,6 +32,10 @@ export class ApiService {
 
   put<T>(endpoint: string, body: any): Observable<T> {
     return this.http.put<T>(`${this.baseUrl}${endpoint}`, body);
+  }
+
+  patch<T>(endpoint: string, body: any): Observable<T> {
+    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body);
   }
 
   delete<T>(endpoint: string): Observable<T> {

@@ -11,13 +11,13 @@ import { ComingSoonService } from './coming-soon-service';
     <div class="modal-backdrop" (click)="onBackdropClick($event)">
       <div class="modal-panel max-w-sm">
         <!-- Header -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
             <span class="material-symbols-outlined text-primary">rocket_launch</span>
             {{ comingSoonService.title() }}
           </h3>
           <button (click)="close()"
-            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors rounded-full p-1 hover:bg-slate-100 dark:hover:bg-white/5">
+            class="text-slate-400 hover:text-slate-600 transition-colors rounded-full p-1 hover:bg-slate-100">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -28,16 +28,16 @@ import { ComingSoonService } from './coming-soon-service';
             <span class="material-symbols-outlined text-primary text-4xl">construction</span>
           </div>
           
-          <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+          <h4 class="text-xl font-bold text-slate-900 mb-2">
             {{ comingSoonService.featureName() || 'Esta funcionalidad' }}
           </h4>
-          <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+          <p class="text-slate-500 text-sm leading-relaxed">
             Estamos trabajando intensamente para traerte esta característica. Muy pronto estará disponible en tu panel de Aurea.
           </p>
         </div>
 
         <!-- Footer -->
-        <div class="bg-slate-50 dark:bg-[#221010] px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex justify-center">
+        <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-center">
           <button (click)="close()"
             class="w-full px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold shadow-lg shadow-primary/25 transition-all transform active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-primary">
             Entendido
@@ -71,11 +71,6 @@ import { ComingSoonService } from './coming-soon-service';
       display: flex;
       flex-direction: column;
       animation: panel-in 0.3s cubic-bezier(0.21, 1.02, 0.73, 1);
-    }
-
-    :host-context(.dark) .modal-panel {
-      background: #1a0c0c;
-      border-color: #1e293b;
     }
 
     @keyframes backdrop-in {

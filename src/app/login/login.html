@@ -1,30 +1,27 @@
-<div class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display">
+<div class="bg-background-light min-h-screen flex flex-col font-display">
     <!-- Navigation Header -->
-    <header
-        class="w-full px-6 lg:px-8 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark">
+    <header class="w-full px-6 lg:px-8 py-3 flex items-center justify-between border-b border-slate-200 bg-white">
         <div class="flex items-center gap-2 text-primary">
             <div class="size-7 bg-[#e53e3e]/10 rounded flex items-center justify-center">
                 <span class="material-symbols-outlined text-primary" style="font-size: 18px;">shield_person</span>
             </div>
-            <h2 class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight tracking-tight">Portal de
+            <h2 class="text-slate-900 text-base font-bold leading-tight tracking-tight">Portal de
                 Acceso</h2>
         </div>
-        <button
-            routerLink="/help"
+        <button routerLink="/help"
             class="flex min-w-[70px] cursor-pointer items-center justify-center rounded-lg h-8 px-3 bg-[#e53e3e]/10 text-primary hover:bg-[#e53e3e]/20 transition-colors text-xs font-semibold">
             <span class="truncate">Ayuda</span>
         </button>
     </header>
     <!-- Main Content Area -->
     <main
-        class="flex-grow flex items-center justify-center p-4 lg:p-8 bg-gradient-to-br from-background-light to-slate-200 dark:from-background-dark dark:to-slate-900">
+        class="flex-grow flex items-center justify-center p-4 lg:p-8 bg-gradient-to-br from-background-light to-slate-200">
         <div class="w-full max-w-[380px]">
             <!-- Login Card -->
-            <div
-                class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800">
+            <div class="bg-white p-6 rounded-xl shadow-xl shadow-slate-200/50 border border-slate-100">
                 <div class="text-center mb-6">
-                    <h1 class="text-slate-900 dark:text-slate-100 text-2xl font-bold mb-1.5">Inicio de Sesión</h1>
-                    <p class="text-slate-500 dark:text-slate-400 text-xs">Bienvenido de nuevo. Por favor, ingresa tus
+                    <h1 class="text-slate-900 text-2xl font-bold mb-1.5">Inicio de Sesión</h1>
+                    <p class="text-slate-500 text-xs">Bienvenido de nuevo. Por favor, ingresa tus
                         datos.</p>
                 </div>
 
@@ -36,15 +33,14 @@
                 <form class="space-y-4" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                     <!-- User Field -->
                     <div class="flex flex-col gap-1">
-                        <label class="text-slate-700 dark:text-slate-300 text-xs font-semibold"
-                            for="email">Correo</label>
+                        <label class="text-slate-700 text-xs font-semibold" for="email">Correo</label>
                         <div class="relative group">
                             <span
                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-lg">
                                 email
                             </span>
                             <input
-                                class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                                class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
                                 id="email" formControlName="email" placeholder="Ingresa tu correo electrónico"
                                 type="email" />
                         </div>
@@ -52,8 +48,7 @@
                     <!-- Password Field -->
                     <div class="flex flex-col gap-1">
                         <div class="flex justify-between items-center">
-                            <label class="text-slate-700 dark:text-slate-300 text-xs font-semibold"
-                                for="password">Contraseña</label>
+                            <label class="text-slate-700 text-xs font-semibold" for="password">Contraseña</label>
                             <a class="text-primary text-[11px] font-semibold hover:underline" href="#">¿Olvidaste tu
                                 contraseña?</a>
                         </div>
@@ -63,12 +58,11 @@
                                 lock
                             </span>
                             <input
-                                class="w-full pl-9 pr-10 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                                class="w-full pl-9 pr-10 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
                                 id="password" formControlName="password" placeholder="Ingresa tu contraseña"
                                 [type]="showPassword ? 'text' : 'password'" />
-                            <button
-                                (click)="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center"
+                            <button (click)="showPassword = !showPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 flex items-center justify-center"
                                 type="button">
                                 <span class="material-symbols-outlined text-[18px]">
                                     {{ showPassword ? 'visibility_off' : 'visibility' }}
@@ -88,16 +82,16 @@
                 <!-- Divider -->
                 <div class="relative my-6">
                     <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
+                        <div class="w-full border-t border-slate-200"></div>
                     </div>
                     <div class="relative flex justify-center text-[10px] uppercase font-semibold tracking-wider">
-                        <span class="bg-white dark:bg-slate-900 px-2 text-slate-400">O acceder con</span>
+                        <span class="bg-white px-2 text-slate-400">O acceder con</span>
                     </div>
                 </div>
                 <!-- Secondary Social Logins -->
                 <div>
                     <button
-                        class="w-full flex items-center justify-center gap-2 py-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300 text-xs font-medium">
+                        class="w-full flex items-center justify-center gap-2 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-700 text-xs font-medium">
                         <svg class="w-4 h-4" viewbox="0 0 24 24">
                             <path
                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -118,24 +112,23 @@
             </div>
             <!-- Footer links -->
             <div class="mt-6 text-center space-y-2">
-                <p class="text-slate-500 dark:text-slate-400 text-xs">
+                <p class="text-slate-500 text-xs">
                     ¿No tienes una cuenta?
-                    <button type="button" (click)="comingSoonService.open('Registro de Usuarios')" 
-                        class="text-primary font-bold hover:underline bg-transparent border-0 p-0 cursor-pointer">Regístrate ahora</button>
+                    <a routerLink="/register" class="text-primary font-bold hover:underline cursor-pointer">Regístrate
+                        ahora</a>
                 </p>
                 <div class="flex items-center justify-center gap-3 pt-3">
-                    <a class="text-slate-400 dark:text-slate-600 text-[10px] hover:text-primary transition-colors cursor-pointer"
+                    <a class="text-slate-400 text-[10px] hover:text-primary transition-colors cursor-pointer"
                         routerLink="/terms">Términos y condiciones</a>
-                    <span class="text-slate-300 dark:text-slate-800 text-[10px]">•</span>
-                    <a class="text-slate-400 dark:text-slate-600 text-[10px] hover:text-primary transition-colors cursor-pointer"
+                    <span class="text-slate-300 text-[10px]">•</span>
+                    <a class="text-slate-400 text-[10px] hover:text-primary transition-colors cursor-pointer"
                         routerLink="/privacy">Privacidad</a>
                 </div>
             </div>
         </div>
     </main>
     <!-- Support Bar -->
-    <footer
-        class="w-full py-3 px-6 text-center text-slate-400 dark:text-slate-600 text-[10px] border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark">
-        © 2024 Portal de Acceso. Todos los derechos reservados.
+    <footer class="w-full py-3 px-6 text-center text-slate-400 text-[10px] border-t border-slate-200 bg-white">
+        © 2026 Aurea Fintech. Todos los derechos reservados.
     </footer>
 </div>

@@ -27,10 +27,7 @@
   animation: panel-in 0.3s cubic-bezier(0.21, 1.02, 0.73, 1);
 }
 
-:host-context(.dark) .modal-panel {
-  background: #1a0c0c;
-  border-color: #1e293b;
-}
+
 
 @keyframes backdrop-in {
   from { opacity: 0; }

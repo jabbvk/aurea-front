@@ -1,4 +1,4 @@
-<div class="bg-background-light dark:bg-background-dark font-display min-h-screen flex items-center justify-center px-6 transition-colors duration-200">
+<div class="bg-background-light font-display min-h-screen flex items-center justify-center px-6 transition-colors duration-200">
   <div class="max-w-md w-full">
     <app-error-state
       title="500"
@@ -9,13 +9,13 @@
 
     <!-- Unified Action -->
     <div class="mt-4 flex flex-col items-center justify-center gap-4">
-      <a routerLink="/dashboard"
+      <a [routerLink]="backLink"
         class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-bold transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5">
-        <span class="material-symbols-outlined text-lg">dashboard</span>
-        Volver al Dashboard
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+        Volver
       </a>
       
-      <p class="text-[11px] text-slate-400 dark:text-slate-600">
+      <p class="text-[11px] text-slate-400">
         Si el problema persiste, contacta con soporte.
       </p>
     </div>

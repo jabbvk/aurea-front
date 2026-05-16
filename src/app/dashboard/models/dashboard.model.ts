@@ -12,17 +12,15 @@ export interface DashboardData {
   periodIncome: number;
   periodExpenses: number;
   cashBalance: number;
-  emergencyFundBalance: number;
+  emergencyFundBalance: number | null;
   totalAssets: number;
   totalDebt: number;
   
   recentIncomes: Array<{ id: string; source: string; amount: number; date: string; category: string }>;
-  hasMoreIncomes: boolean;
   recentExpenses: Array<{ id: string; description: string; amount: number; date: string; category: string }>;
-  hasMoreExpenses: boolean;
   assetBreakdown: Array<{ type: string; value: number; percentage: number; color: string }>;
   activeDebts: Array<{ id: string; name: string; amount: number; creditor: string }>;
-  hasMoreDebts: boolean;
+  assetTickers: Array<{ ticker: string; quantity: number; currentPrice: number; type: string }>;
 }
 
 /** UI mapping for the period selector buttons */

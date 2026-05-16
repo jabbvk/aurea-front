@@ -3,14 +3,12 @@ module.exports = {
   content: [
     "./src/**/*.{html,ts}",
   ],
-  darkMode: "class",
   theme: {
     extend: {
       colors: {
         "primary": "#ec1313",
         "primary-hover": "#d10f0f",
         "background-light": "#f8f6f6",
-        "background-dark": "#221010",
       },
       fontFamily: {
         "display": ["Inter", "sans-serif"]

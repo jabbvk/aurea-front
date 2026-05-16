@@ -1,9 +1,8 @@
-import { Component, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { DashboardService } from './services/dashboard.service';
-import { RegisterMovementModalService } from '../shared/register-movement-modal/register-movement-modal.service';
 import { RouterLink } from '@angular/router';
 import {
   DashboardData,
@@ -11,18 +10,20 @@ import {
   PERIOD_OPTIONS,
 } from './models/dashboard.model';
 
-import { ActionButton } from '../shared/action-button/action-button';
 import { ErrorState } from '../shared/error-state/error-state';
+import { RollingNumber } from '../shared/rolling-number/rolling-number';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [Sidebar, CommonModule, CurrencyPipe, DecimalPipe, RouterLink, ActionButton, ErrorState],
+  standalone: true,
+  imports: [Sidebar, CommonModule, CurrencyPipe, DecimalPipe, RouterLink, ErrorState, RollingNumber],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit, OnDestroy {
   private readonly dashboardService = inject(DashboardService);
-  readonly modalService = inject(RegisterMovementModalService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly destroy$ = new Subject<void>();
 
   // ── State signals ──
@@ -57,9 +58,13 @@ export class Dashboard implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadDashboard();
 
-    this.modalService.movementRegistered$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.loadDashboard());
+    // Nuevo Stream específico para el Dashboard (Agrupaciones)
+    this.dashboardService.getDashboardStream()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (update) => this.handleDashboardUpdate(update),
+        error: (err) => console.warn('Dashboard stream error:', err)
+      });
   }
 
   ngOnDestroy(): void {
@@ -92,5 +97,44 @@ export class Dashboard implements OnInit, OnDestroy {
           this.hasError.set(true);
         },
       });
+  }
+
+  private handleDashboardUpdate(update: any): void {
+    this.data.update(currentData => {
+      if (!currentData) return currentData;
+
+      // Actualizar el desglose de la categoría afectada
+      const newAssetBreakdown = currentData.assetBreakdown.map(b => {
+        if (b.type === update.type) {
+          return {
+            ...b,
+            value: update.newValue,
+            percentage: update.newTotalAssets > 0 ? (update.newValue / update.newTotalAssets) * 100 : 0
+          };
+        }
+        // Actualizar porcentaje de las demás categorías porque el total ha cambiado
+        return {
+          ...b,
+          percentage: update.newTotalAssets > 0 ? (b.value / update.newTotalAssets) * 100 : 0
+        };
+      });
+
+      return {
+        ...currentData,
+        netWorth: update.newNetWorth,
+        totalAssets: update.newTotalAssets,
+        assetBreakdown: newAssetBreakdown
+      };
+    });
+  }
+
+  formatAssetType(type: string): string {
+    const types: Record<string, string> = {
+      'STOCK': 'Acciones / ETFs',
+      'CRYPTO': 'Criptomonedas',
+      'REAL_ESTATE': 'Inmuebles',
+      'OTROS': 'Otros'
+    };
+    return types[type] || type;
   }
 }

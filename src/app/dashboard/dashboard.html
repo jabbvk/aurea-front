@@ -1,62 +1,74 @@
-<div
-    class="bg-background-light text-slate-900 dark:bg-background-dark dark:text-slate-100 font-display transition-colors duration-200 no-scroll-layout flex">
+<div class="bg-background-light text-slate-900 font-display transition-colors duration-200 no-scroll-layout flex">
     <app-sidebar></app-sidebar>
-    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-background-light dark:bg-background-dark">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-background-light">
         <header
-            class="sticky top-0 z-20 flex items-center justify-between px-8 py-6 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-transparent dark:border-slate-800">
+            class="sticky top-0 z-20 flex items-center justify-between px-8 py-6 bg-background-light/95 backdrop-blur-sm border-b border-transparent">
             <div class="flex items-center gap-4">
                 <!-- Title removed as requested -->
             </div>
             <div class="flex items-center gap-4">
-                <app-action-button label="Registrar Movimiento" (action)="modalService.open()"></app-action-button>
+                <!-- Actions removed from main dashboard -->
             </div>
         </header>
         <div class="flex-1 px-6 pb-6 pt-4 overflow-y-auto overflow-x-hidden flex flex-col gap-4">
 
-            <!-- ── Loading skeleton ── -->
+            <!-- Loading skeleton -->
             @if (isLoading() && !data()) {
             <!-- Header Card Skeleton -->
             <div
-                class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center justify-between animate-pulse">
+                class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center justify-between animate-pulse">
                 <div class="flex flex-col gap-2">
-                    <div class="h-3 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                    <div class="h-10 w-64 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                    <div class="h-3 w-24 bg-slate-200 dark:bg-slate-700 rounded mt-1"></div>
+                    <div class="h-3 w-32 bg-slate-200 rounded"></div>
+                    <div class="h-10 w-64 bg-slate-200 rounded"></div>
+                    <div class="h-3 w-24 bg-slate-200 rounded mt-1"></div>
                 </div>
-                <div class="h-10 w-64 bg-slate-100 dark:bg-slate-800 rounded-xl"></div>
+                <div class="h-10 w-64 bg-slate-100 rounded-xl"></div>
             </div>
 
-            <!-- Main Grid Skeleton (4 cards) -->
+            <!-- Top Grid Skeleton (2 cards: Efectivo & Fondo) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse">
-                @for (i of [1,2,3,4]; track i) {
+                @for (i of [1,2]; track i) {
                 <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm h-48 flex flex-col justify-between">
+                    class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm h-[132px] flex flex-col justify-between">
                     <div class="flex justify-between">
                         <div class="flex flex-col gap-2">
-                            <div class="h-3 w-28 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                            <div class="h-8 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                            <div class="h-3 w-28 bg-slate-200 rounded"></div>
+                            <div class="h-8 w-32 bg-slate-200 rounded"></div>
                         </div>
-                        <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+                        <div class="h-8 w-8 rounded-full bg-slate-200"></div>
                     </div>
-                    <div class="space-y-3">
-                        <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded"></div>
-                        <div class="h-2 w-5/6 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                    <div class="space-y-3 mt-4">
+                        <div class="h-2 w-full bg-slate-100 rounded"></div>
                     </div>
                 </div>
                 }
             </div>
 
-            <!-- Bottom Grid Skeleton (2 cards) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse pb-4">
-                @for (i of [1,2]; track i) {
+            <!-- Bottom Grid Skeleton (4 cards: Activos, Ingresos, Deuda, Gastos) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 animate-pulse pb-4">
+                @for (i of [1,2,3,4]; track i) {
                 <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm h-32 flex flex-col justify-between">
-                    <div class="flex justify-between">
+                    class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm h-[280px] flex flex-col">
+                    <div class="flex justify-between items-start mb-4">
                         <div class="flex flex-col gap-2">
-                            <div class="h-3 w-28 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                            <div class="h-7 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                            <div class="h-3 w-20 bg-slate-200 rounded"></div>
+                            <div class="h-8 w-28 bg-slate-200 rounded"></div>
                         </div>
-                        <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+                        <div class="h-8 w-8 rounded-full bg-slate-200"></div>
+                    </div>
+                    <div class="mt-4 flex-1 space-y-4">
+                        @for (j of [1,2,3]; track j) {
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="h-8 w-8 rounded bg-slate-100"></div>
+                                <div class="space-y-2">
+                                    <div class="h-2.5 w-24 bg-slate-100 rounded"></div>
+                                    <div class="h-2 w-16 bg-slate-100 rounded"></div>
+                                </div>
+                            </div>
+                            <div class="h-3 w-16 bg-slate-100 rounded"></div>
+                        </div>
+                        }
                     </div>
                 </div>
                 }
@@ -76,21 +88,21 @@
             <!-- ── Dashboard content ── -->
             @if (data(); as d) {
             <section
-                class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                 <div class="flex flex-col">
-                    <p class="text-[13px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Patrimonio Neto Total
+                    <p class="text-[13px] font-semibold text-slate-500 mb-0.5">Patrimonio Neto Total
                     </p>
                     <div class="flex items-center gap-3">
                         @if (isLoading()) {
-                        <div class="h-9 w-48 bg-slate-200 dark:bg-slate-700 animate-pulse rounded my-1"></div>
+                        <div class="h-9 w-48 bg-slate-200 animate-pulse rounded my-1"></div>
                         } @else {
-                        <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                            {{ d.netWorth | currency:'EUR':'symbol':'1.2-2' }}
+                        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                            <app-rolling-number [value]="d.netWorth" suffix="€"></app-rolling-number>
                         </h1>
                         <div class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold" [ngClass]="{
-                                    'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400': isPositiveChange(),
-                                    'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400': !isPositiveChange()
-                                }">
+                                     'bg-emerald-100 text-emerald-700': isPositiveChange(),
+                                     'bg-red-100 text-red-700': !isPositiveChange()
+                                 }">
                             <span class="material-symbols-outlined text-[16px]">
                                 {{ isPositiveChange() ? 'trending_up' : 'trending_down' }}
                             </span>
@@ -101,13 +113,12 @@
                     <p class="text-[11px] text-slate-400 mt-1 font-medium italic">Referencia: {{ periodLabel() }}</p>
                 </div>
 
-                <div
-                    class="bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center gap-1 shadow-inner">
+                <div class="bg-slate-50 p-1.5 rounded-xl border border-slate-100 flex items-center gap-1 shadow-inner">
                     @for (option of periodOptions; track option.value) {
                     <button (click)="selectPeriod(option.value)"
                         class="px-4 py-2 rounded-lg text-[11px] font-bold transition-all duration-200" [ngClass]="{
-                            'bg-white dark:bg-slate-700 text-primary dark:text-white shadow-md transform scale-105': selectedPeriod() === option.value,
-                            'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-white/5': selectedPeriod() !== option.value
+                            'bg-white text-primary shadow-md transform scale-105': selectedPeriod() === option.value,
+                            'text-slate-500 hover:text-slate-700 hover:bg-white/50': selectedPeriod() !== option.value
                         }">
                         {{ option.label }}
                     </button>
@@ -118,87 +129,85 @@
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4 h-auto shrink-0">
                 <!-- Saldo en efectivo -->
                 <article routerLink="/cash"
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
+                    class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative flex flex-col">
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-slate-500 text-[13px] font-medium">Saldo en efectivo</p>
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.cashBalance | currency:'EUR':'symbol':'1.0-0' }}
+                            <h3 class="text-2xl font-bold text-slate-900 mt-0.5">
+                                <app-rolling-number [value]="d.cashBalance" suffix="€"></app-rolling-number>
                             </h3>
                         </div>
-                        <div
-                            class="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
+                        <div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
                             <span class="material-symbols-outlined text-lg">account_balance_wallet</span>
                         </div>
                     </div>
                 </article>
                 <!-- Fondo de emergencia -->
                 <article routerLink="/emergency-fund"
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
+                    class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <p class="text-slate-500 text-[13px] font-medium">Fondo de emergencia</p>
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.emergencyFundBalance | currency:'EUR':'symbol':'1.0-0' }}
-                            </h3>
+                            @if (d.emergencyFundBalance !== null) {
+                                <h3 class="text-2xl font-bold text-slate-900 mt-0.5">
+                                    <app-rolling-number [value]="d.emergencyFundBalance" suffix="€"></app-rolling-number>
+                                </h3>
+                            }
                         </div>
-                        <div
-                            class="h-8 w-8 rounded-full bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <div class="h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 transition-opacity" [class.opacity-50]="d.emergencyFundBalance === null">
                             <span class="material-symbols-outlined text-lg">shield</span>
                         </div>
                     </div>
 
-                    @if (d.periodExpenses > 0) {
+                    @if (d.emergencyFundBalance === null) {
+                        <div class="flex-1 flex flex-col items-center justify-center pb-2">
+                            <p class="text-xs text-slate-500 font-medium">Desactivado</p>
+                        </div>
+                    } @else if (d.periodExpenses > 0) {
                     @let runwayMonths = d.emergencyFundBalance / d.periodExpenses;
                     <div class="mt-auto">
                         <div class="flex justify-between text-xs text-slate-500 mb-1.5">
                             <span class="font-medium">Meses cubiertos</span>
                             <div>
-                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ runwayMonths |
+                                <span class="font-bold text-slate-700">{{ runwayMonths |
                                     number:'1.1-1' }}</span>
                                 <span class="text-[10px]"> / 12 meses</span>
                             </div>
                         </div>
-                        <div class="h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                            <div class="h-full bg-indigo-500 rounded-full transition-all duration-500"
+                        <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary rounded-full transition-all duration-500 shadow-primary/20"
                                 [style.width.%]="(runwayMonths / 12) * 100 > 100 ? 100 : (runwayMonths / 12) * 100">
                             </div>
                         </div>
-                    </div>
-                    } @else {
-                    <div class="mt-auto">
-                        <p class="text-xs text-slate-400 text-center">Registra gastos para calcular tu runway</p>
                     </div>
                     }
                 </article>
 
             </section>
 
-            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 flex-1 min-h-[300px]">
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
                 <!-- Activos -->
                 <article routerLink="/assets"
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
+                    class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <p class="text-slate-500 text-[13px] font-medium">Activos</p>
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.totalAssets | currency:'EUR':'symbol':'1.0-0' }}
+                            <h3 class="text-2xl font-bold text-slate-900 mt-0.5">
+                                <app-rolling-number [value]="d.totalAssets || 0" suffix="€"></app-rolling-number>
                             </h3>
                         </div>
-                        <div
-                            class="h-8 w-8 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <div class="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                             <span class="material-symbols-outlined text-lg">savings</span>
                         </div>
                     </div>
-                    <div class="mt-auto flex-1 overflow-hidden">
+                    <div class="mt-4 flex-1">
                         @if (!d.assetBreakdown || d.assetBreakdown.length === 0) {
                         <div class="flex flex-col items-center justify-center py-6 text-center">
-                            <span
-                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-3xl mb-2">pie_chart</span>
+                            <span class="material-symbols-outlined text-slate-300 text-3xl mb-2">pie_chart</span>
                             <p class="text-xs text-slate-500 font-medium">Sin datos de diversificación</p>
                         </div>
                         } @else {
-                        <div class="flex w-full h-3 rounded-full overflow-hidden mb-4 bg-slate-100 dark:bg-slate-800">
+                        <div class="flex w-full h-3 rounded-full overflow-hidden mb-4 bg-slate-100">
                             @for (asset of d.assetBreakdown; track asset.type) {
                             <div class="h-full" [style.width.%]="asset.percentage"
                                 [style.backgroundColor]="asset.color"></div>
@@ -209,12 +218,13 @@
                             <div class="flex items-center justify-between text-[11px]">
                                 <div class="flex items-center gap-2">
                                     <span class="w-2 h-2 rounded-full" [style.backgroundColor]="asset.color"></span>
-                                    <span class="font-medium text-slate-700 dark:text-slate-300">{{ asset.type }}</span>
+                                    <span class="font-medium text-slate-700">{{ formatAssetType(asset.type) }}</span>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <span class="text-slate-500">{{ asset.percentage | number:'1.0-0' }}%</span>
-                                    <span class="font-bold text-slate-900 dark:text-white w-16 text-right">{{
-                                        asset.value | currency:'EUR':'symbol':'1.0-0' }}</span>
+                                    <span class="font-bold text-slate-900 w-16 text-right">
+                                        <app-rolling-number [value]="asset.value"></app-rolling-number>
+                                    </span>
                                 </div>
                             </div>
                             }
@@ -224,70 +234,64 @@
                 </article>
                 <!-- Ingresos-->
                 <article
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
+                    class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <p class="text-slate-500 text-[13px] font-medium">Ingresos</p>
                             @if (isLoading()) {
-                            <div class="h-8 w-32 bg-slate-100 dark:bg-slate-800 animate-pulse rounded mt-1"></div>
+                            <div class="h-8 w-32 bg-slate-100 animate-pulse rounded mt-1"></div>
                             } @else {
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.periodIncome | currency:'EUR':'symbol':'1.0-0' }}
+                            <h3 class="text-2xl font-bold text-slate-900 mt-0.5">
+                                {{ d.periodIncome | currency:'EUR':'symbol':'1.2-2' }}
                             </h3>
                             }
                         </div>
                         <div
-                            class="h-8 w-8 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                            class="h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                             <span class="material-symbols-outlined text-lg">payments</span>
                         </div>
                     </div>
-                    <div class="mt-auto flex-1 overflow-hidden pr-1">
+                    <div class="mt-2 flex-1 pr-1">
                         @if (isLoading()) {
                         <div class="space-y-4 animate-pulse py-2">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded bg-slate-100 dark:bg-slate-800"></div>
                                     <div class="space-y-2">
-                                        <div class="h-2.5 w-24 bg-slate-100 dark:bg-slate-800 rounded"></div>
-                                        <div class="h-2 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                        <div class="h-2.5 w-24 bg-slate-100 rounded"></div>
+                                        <div class="h-2 w-16 bg-slate-100 rounded"></div>
                                     </div>
                                 </div>
-                                <div class="h-3 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                <div class="h-3 w-16 bg-slate-100 rounded"></div>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded bg-slate-100 dark:bg-slate-800"></div>
                                     <div class="space-y-2">
-                                        <div class="h-2.5 w-20 bg-slate-100 dark:bg-slate-800 rounded"></div>
-                                        <div class="h-2 w-12 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                        <div class="h-2.5 w-20 bg-slate-100 rounded"></div>
+                                        <div class="h-2 w-12 bg-slate-100 rounded"></div>
                                     </div>
                                 </div>
-                                <div class="h-3 w-12 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                <div class="h-3 w-12 bg-slate-100 rounded"></div>
                             </div>
                         </div>
                         } @else if (!d.recentIncomes || d.recentIncomes.length === 0) {
                         <div class="flex flex-col items-center justify-center py-6 text-center">
-                            <span
-                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-3xl mb-2">receipt_long</span>
+                            <span class="material-symbols-outlined text-slate-300 text-3xl mb-2">receipt_long</span>
                             <p class="text-xs text-slate-500 font-medium">No hay ingresos recientes</p>
                         </div>
                         } @else {
-                        <div class="space-y-3">
+                        <div>
                             @for (income of d.recentIncomes; track income.id) {
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0">
                                 <div class="flex items-center gap-3">
-                                    <div
-                                        class="h-8 w-8 rounded bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
-                                        <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
-                                    </div>
+
                                     <div>
-                                        <p class="text-[12px] font-semibold text-slate-900 dark:text-white">{{
+                                        <p class="text-[12px] font-semibold text-slate-900">{{
                                             income.source }}</p>
                                         <p class="text-[10px] text-slate-400">{{ income.date | date:'dd MMM, yyyy' }}
                                         </p>
                                     </div>
                                 </div>
-                                <span class="text-[12px] font-bold text-emerald-600 dark:text-emerald-400">+{{
+                                <span class="text-[12px] font-bold text-emerald-600">+{{
                                     income.amount | currency:'EUR':'symbol':'1.2-2' }}</span>
                             </div>
                             }
@@ -298,24 +302,22 @@
 
                 <!-- Deuda -->
                 <article
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
+                    class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <p class="text-slate-500 text-[13px] font-medium">Deuda</p>
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.totalDebt | currency:'EUR':'symbol':'1.0-0' }}
+                            <h3 class="text-2xl font-bold text-slate-900 mt-0.5">
+                                {{ d.totalDebt | currency:'EUR':'symbol':'1.2-2' }}
                             </h3>
                         </div>
-                        <div
-                            class="h-8 w-8 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                        <div class="h-8 w-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600">
                             <span class="material-symbols-outlined text-lg">error</span>
                         </div>
                     </div>
-                    <div class="mt-auto flex-1 overflow-hidden pr-1">
+                    <div class="mt-4 flex-1 pr-1">
                         @if (!d.activeDebts || d.activeDebts.length === 0) {
                         <div class="flex flex-col items-center justify-center py-6 text-center">
-                            <span
-                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-3xl mb-2">check_circle</span>
+                            <span class="material-symbols-outlined text-slate-300 text-3xl mb-2">check_circle</span>
                             <p class="text-xs text-slate-500 font-medium">Sin deudas activas</p>
                         </div>
                         } @else {
@@ -324,16 +326,16 @@
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
                                     <div
-                                        class="h-8 w-8 rounded bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                                        class="h-8 w-8 rounded bg-slate-50 flex items-center justify-center text-slate-500">
                                         <span class="material-symbols-outlined text-[16px]">account_balance</span>
                                     </div>
                                     <div>
-                                        <p class="text-[12px] font-semibold text-slate-900 dark:text-white">{{ debt.name
+                                        <p class="text-[12px] font-semibold text-slate-900">{{ debt.name
                                             }}</p>
                                         <p class="text-[10px] text-slate-400">{{ debt.creditor }}</p>
                                     </div>
                                 </div>
-                                <span class="text-[12px] font-bold text-orange-600 dark:text-orange-400">{{ debt.amount
+                                <span class="text-[12px] font-bold text-orange-600">{{ debt.amount
                                     | currency:'EUR':'symbol':'1.2-2' }}</span>
                             </div>
                             }
@@ -343,70 +345,63 @@
                 </article>
                 <!-- Gastos-->
                 <article
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col">
+                    class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer relative flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <p class="text-slate-500 text-[13px] font-medium">Gastos</p>
                             @if (isLoading()) {
-                            <div class="h-8 w-32 bg-slate-100 dark:bg-slate-800 animate-pulse rounded mt-1"></div>
+                            <div class="h-8 w-32 bg-slate-100 animate-pulse rounded mt-1"></div>
                             } @else {
-                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                                {{ d.periodExpenses | currency:'EUR':'symbol':'1.0-0' }}
+                            <h3 class="text-2xl font-bold text-slate-900 mt-0.5">
+                                {{ d.periodExpenses | currency:'EUR':'symbol':'1.2-2' }}
                             </h3>
                             }
                         </div>
-                        <div
-                            class="h-8 w-8 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-primary">
+                        <div class="h-8 w-8 rounded-full bg-red-50 flex items-center justify-center text-primary">
                             <span class="material-symbols-outlined text-lg">credit_card</span>
                         </div>
                     </div>
-                    <div class="mt-auto flex-1 overflow-hidden pr-1">
+                    <div class="mt-2 flex-1 pr-1">
                         @if (isLoading()) {
                         <div class="space-y-4 animate-pulse py-2">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded bg-slate-100 dark:bg-slate-800"></div>
                                     <div class="space-y-2">
-                                        <div class="h-2.5 w-24 bg-slate-100 dark:bg-slate-800 rounded"></div>
-                                        <div class="h-2 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                        <div class="h-2.5 w-24 bg-slate-100 rounded"></div>
+                                        <div class="h-2 w-16 bg-slate-100 rounded"></div>
                                     </div>
                                 </div>
-                                <div class="h-3 w-16 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                <div class="h-3 w-16 bg-slate-100 rounded"></div>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-8 w-8 rounded bg-slate-100 dark:bg-slate-800"></div>
                                     <div class="space-y-2">
-                                        <div class="h-2.5 w-20 bg-slate-100 dark:bg-slate-800 rounded"></div>
-                                        <div class="h-2 w-12 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                        <div class="h-2.5 w-20 bg-slate-100 rounded"></div>
+                                        <div class="h-2 w-12 bg-slate-100 rounded"></div>
                                     </div>
                                 </div>
-                                <div class="h-3 w-12 bg-slate-100 dark:bg-slate-800 rounded"></div>
+                                <div class="h-3 w-12 bg-slate-100 rounded"></div>
                             </div>
                         </div>
                         } @else if (!d.recentExpenses || d.recentExpenses.length === 0) {
                         <div class="flex flex-col items-center justify-center py-6 text-center">
-                            <span
-                                class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-3xl mb-2">receipt</span>
+                            <span class="material-symbols-outlined text-slate-300 text-3xl mb-2">receipt</span>
                             <p class="text-xs text-slate-500 font-medium">No hay gastos recientes</p>
                         </div>
                         } @else {
-                        <div class="space-y-3">
+                        <div>
                             @for (expense of d.recentExpenses; track expense.id) {
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0">
                                 <div class="flex items-center gap-3">
-                                    <div
-                                        class="h-8 w-8 rounded bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
-                                        <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
-                                    </div>
+
                                     <div>
-                                        <p class="text-[12px] font-semibold text-slate-900 dark:text-white">{{
+                                        <p class="text-[12px] font-semibold text-slate-900">{{
                                             expense.description }}</p>
                                         <p class="text-[10px] text-slate-400">{{ expense.date | date:'dd MMM, yyyy' }}
                                         </p>
                                     </div>
                                 </div>
-                                <span class="text-[12px] font-bold text-slate-900 dark:text-white">-{{ expense.amount |
+                                <span class="text-[12px] font-bold text-slate-900">-{{ expense.amount |
                                     currency:'EUR':'symbol':'1.2-2' }}</span>
                             </div>
                             }

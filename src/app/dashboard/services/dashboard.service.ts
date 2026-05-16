@@ -13,4 +13,22 @@ export class DashboardService {
   getDashboard(period: DashboardPeriod = DashboardPeriod.LAST_MONTH): Observable<DashboardData> {
     return this.api.get<DashboardData>(this.endpoint, { period });
   }
+
+  getDashboardStream(): Observable<any> {
+    return new Observable(observer => {
+      const eventSource = new EventSource(`${this.api.getBaseUrl()}/aurea/dashboard/stream`);
+      
+      eventSource.addEventListener('dashboard-update', (event: MessageEvent) => {
+        observer.next(JSON.parse(event.data));
+      });
+
+      eventSource.onerror = (error) => {
+        observer.error(error);
+      };
+
+      return () => {
+        eventSource.close();
+      };
+    });
+  }
 }

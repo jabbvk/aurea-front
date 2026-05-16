@@ -1,0 +1,27 @@
+.price-flash-up {
+  animation: flash-green 1s ease-out;
+}
+
+.price-flash-down {
+  animation: flash-red 1s ease-out;
+}
+
+@keyframes flash-green {
+  0% { background-color: rgba(16, 185, 129, 0.2); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-red {
+  0% { background-color: rgba(239, 68, 68, 0.2); }
+  100% { background-color: transparent; }
+}
+
+.price-text-up {
+  color: #10b981;
+  transition: color 0.3s;
+}
+
+.price-text-down {
+  color: #ef4444;
+  transition: color 0.3s;
+}

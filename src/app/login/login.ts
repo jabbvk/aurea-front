@@ -2,6 +2,7 @@ import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/services/api.service';
+import { AuthService } from '../core/services/auth.service';
 import { ComingSoonService } from '../shared/coming-soon-modal/coming-soon-service';
 import { CommonModule } from '@angular/common';
 
@@ -13,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class Login {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly apiService = inject(ApiService);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly comingSoonService = inject(ComingSoonService);
@@ -36,7 +38,7 @@ export class Login {
       .subscribe({
         next: (response) => {
           if (response.token) {
-            localStorage.setItem('access_token', response.token);
+            this.authService.setToken(response.token);
             this.router.navigate(['/dashboard']);
           } else {
             // Failsafe condition

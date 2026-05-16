@@ -1,286 +1,300 @@
 <div
-    class="bg-background-light text-slate-900 dark:bg-background-dark dark:text-slate-100 font-display transition-colors duration-200 no-scroll-layout flex h-screen w-full overflow-hidden">
+    class="bg-background-light text-slate-900 font-display transition-colors duration-200 no-scroll-layout flex h-screen w-full overflow-hidden">
     <app-sidebar></app-sidebar>
 
-    <main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark relative">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-background-light">
         <header
-            class="sticky top-0 z-20 flex items-center justify-between px-8 py-6 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-transparent dark:border-slate-800">
+            class="sticky top-0 z-20 flex items-center justify-between px-8 py-6 bg-background-light/95 backdrop-blur-sm border-b border-transparent">
             <div class="flex items-center gap-4">
-                <!-- Title removed as requested -->
             </div>
             <div class="flex items-center gap-4">
-                <app-action-button label="Gestionar Activos" (action)="modalService.open('asset', true)"></app-action-button>
+                <app-action-button label="Gestionar Activos" [disabled]="isDashboardLoading()"
+                    (action)="modalService.open('asset', true)"></app-action-button>
             </div>
         </header>
 
-        <div class="px-8 pb-12 flex flex-col gap-6 w-full">
+        <div class="flex-1 px-6 pb-6 pt-4 overflow-y-auto overflow-x-hidden flex flex-col gap-6">
             @if (isDashboardLoading()) {
             <div class="flex flex-col gap-6 animate-pulse">
-                <!-- Valor Total Card Skeleton -->
-                <div class="bg-white dark:bg-[#2a1a1a] rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
-                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
-                        <div class="flex flex-col sm:flex-row gap-8 sm:items-center">
-                            <div class="flex flex-col gap-2">
-                                <div class="h-3 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                                <div class="h-9 w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                            </div>
-                            <div class="hidden sm:block w-px h-12 bg-slate-100 dark:bg-slate-800"></div>
-                            <div class="flex flex-col gap-2">
-                                <div class="h-3 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                                <div class="h-9 w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                            </div>
+                <!-- Summary Skeleton -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                    <div class="flex flex-col sm:flex-row gap-8 sm:items-center">
+                        <div class="flex flex-col gap-2">
+                            <div class="h-3 w-32 bg-slate-200 rounded"></div>
+                            <div class="h-9 w-48 bg-slate-200 rounded"></div>
                         </div>
-                        <div class="h-10 w-64 bg-slate-100 dark:bg-slate-800 rounded-xl"></div>
+                        <div class="hidden sm:block w-px h-12 bg-slate-100"></div>
+                        <div class="flex flex-col gap-2">
+                            <div class="h-3 w-32 bg-slate-200 rounded"></div>
+                            <div class="h-9 w-48 bg-slate-200 rounded"></div>
+                        </div>
                     </div>
-                    <div class="w-full h-64 bg-slate-50/50 dark:bg-white/2 rounded-xl border border-slate-100 dark:border-slate-800/50"></div>
                 </div>
 
-                <!-- Distribución Portafolio Skeleton -->
-                <div class="bg-white dark:bg-[#2a1a1a] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 h-[500px]">
-                    <div class="h-5 w-48 bg-slate-200 dark:bg-slate-700 rounded mb-8"></div>
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full">
+                <!-- Distribution Skeleton -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-[400px]">
+                    <div class="h-5 w-48 bg-slate-200 rounded mb-8"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                         <div class="lg:col-span-5 flex justify-center">
-                            <div class="size-64 rounded-full border-[20px] border-slate-100 dark:border-slate-800"></div>
+                            <div class="size-64 rounded-full border-[20px] border-slate-100"></div>
                         </div>
-                        <div class="lg:col-span-7 h-80 bg-slate-50/50 dark:bg-white/2 rounded-xl"></div>
+                        <div class="lg:col-span-7 h-64 bg-slate-50/50 rounded-xl"></div>
                     </div>
                 </div>
             </div>
             } @else if (hasDashboardError()) {
-            <app-error-state 
-                title="Error al cargar los datos" 
+            <app-error-state title="Error al cargar los datos"
                 message="No hemos podido conectar con el servidor. Por favor, inténtalo de nuevo."
                 (retry)="fetchDashboard()">
             </app-error-state>
-            } @else if (dashboardData(); as d) {
+            } @else {
+            @let d = dashboardData();
             <div class="grid grid-cols-1 gap-6">
-                <!-- Valor Total Card -->
-                <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800">
-                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
-                        <div class="flex flex-col sm:flex-row gap-8 sm:items-center">
-                            <div>
-                                <p class="text-slate-500 text-[13px] font-medium mb-0.5">Valor Total de Activos</p>
-                                <div class="flex items-baseline gap-3">
-                                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white whitespace-nowrap">
-                                        {{ d.summary.totalValue | currency:'EUR':'symbol':'1.2-2' }}
-                                    </h3>
-                                    <div [ngClass]="{'text-green-600 bg-green-50 dark:bg-green-900/20': d.summary.totalChangeValue >= 0, 'text-red-600 bg-red-50 dark:bg-red-900/20': d.summary.totalChangeValue < 0}"
-                                        class="flex items-center gap-1 font-bold px-2 py-1 rounded whitespace-nowrap text-[13px]">
-                                        <span class="material-symbols-outlined text-[16px]">
-                                            {{ d.summary.totalChangeValue >= 0 ? 'trending_up' : 'trending_down' }}
-                                        </span>
-                                        <span>
-                                            {{ d.summary.totalChangeValue >= 0 ? '+' : '' }}{{
-                                            d.summary.totalChangeValue | currency:'EUR':'symbol':'1.0-0' }}
-                                            ({{ d.summary.totalChangePercent }}%)
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="hidden sm:block w-px h-12 bg-slate-200 dark:bg-slate-700"></div>
-                            <div>
-                                <p class="text-slate-500 text-[13px] font-medium mb-0.5">Cantidad Invertida</p>
-                                <div class="flex items-baseline gap-3">
-                                    <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">
-                                        {{ d.summary.investedAmount | currency:'EUR':'symbol':'1.2-2' }}
-                                    </h3>
+                <!-- Summary Card -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                    <div class="flex flex-col sm:flex-row gap-8 sm:items-center">
+                        <div>
+                            <p class="text-slate-500 text-[13px] font-medium mb-0.5">Valor Total Portafolio</p>
+                            <h3 class="text-3xl font-black text-slate-900 tracking-tight">
+                                <app-rolling-number [value]="d.summary.totalValue || 0" suffix="€"></app-rolling-number>
+                            </h3>
+                        </div>
+                        <div class="hidden sm:block w-px h-12 bg-slate-200"></div>
+                        <div>
+                            <p class="text-slate-500 text-[13px] font-medium mb-0.5">Resultado Total</p>
+                            <div class="flex items-center gap-3">
+                                <h3 class="text-2xl font-bold tracking-tight"
+                                    [ngClass]="(d.summary.totalChangeValue || 0) >= 0 ? 'text-emerald-500' : 'text-rose-500'">
+                                    {{ (d.summary.totalChangeValue || 0) >= 0 ? '+' : '' }}{{ (d.summary.totalChangeValue || 0) |
+                                    currency:'EUR':'symbol':'1.2-2' }}
+                                </h3>
+                                <div [ngClass]="(d.summary.totalChangePercent || 0) >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'"
+                                    class="flex items-center gap-1 font-black px-2 py-1 rounded text-[12px] shadow-sm">
+                                    <span class="material-symbols-outlined text-[16px]">
+                                        {{ (d.summary.totalChangePercent || 0) >= 0 ? 'trending_up' : 'trending_down' }}
+                                    </span>
+                                    <span>{{ (d.summary.totalChangePercent || 0) >= 0 ? '+' : '' }}{{ (d.summary.totalChangePercent || 0) | number:'1.2-2'
+                                        }}%</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800 flex gap-1 shadow-inner self-start lg:self-center">
-                            <button
-                                class="px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all">1D</button>
-                            <button
-                                class="px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all">1S</button>
-                            <button
-                                class="px-3 py-1.5 text-[11px] font-bold rounded-lg bg-white dark:bg-slate-700 text-primary dark:text-white shadow-md transform scale-105">1M</button>
-                            <button
-                                class="px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all">6M</button>
-                            <button
-                                class="px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all">1A</button>
-                            <button
-                                class="px-3 py-1.5 text-[11px] font-bold rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all">Todo</button>
-                        </div>
-                    </div>
-                    <div class="w-full h-64 mt-4 relative">
-                        <div echarts [options]="lineChartOption()" [loading]="isDashboardLoading()" class="w-full h-full"></div>
                     </div>
                 </div>
 
-                <!-- Distribución Portafolio -->
-                <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5">
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">donut_large</span>
-                        Distribución de Portafolio
+                <!-- Performance History -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">monitoring</span>
+                        Evolución del Portafolio
                     </h3>
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="h-64">
+                        <div echarts [options]="historyChartOption()" [loading]="isDashboardLoading()"
+                            theme="light" class="w-full h-full"></div>
+                    </div>
+                </div>
+
+                <!-- Distribution and Allocation -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">donut_large</span>
+                            Distribución de Portafolio
+                        </h3>
+                        
+                        <!-- Category Filter Selector -->
+                        <div class="flex bg-slate-50 p-1 rounded-xl border border-slate-200 gap-1 overflow-x-auto no-scrollbar">
+                            <button (click)="setCategoryFilter('ALL')" 
+                                [class]="selectedCategoryFilter() === 'ALL' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
+                                Todos
+                            </button>
+                            <button (click)="setCategoryFilter(AssetClass.STOCK)" 
+                                [class]="selectedCategoryFilter() === AssetClass.STOCK ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
+                                Acciones / ETFs
+                            </button>
+                            <button (click)="setCategoryFilter(AssetClass.CRYPTO)" 
+                                [class]="selectedCategoryFilter() === AssetClass.CRYPTO ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
+                                Criptomonedas
+                            </button>
+                            <button (click)="setCategoryFilter(AssetClass.REAL_ESTATE)" 
+                                [class]="selectedCategoryFilter() === AssetClass.REAL_ESTATE ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
+                                Inmuebles
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                         <!-- Donut Chart -->
                         <div class="lg:col-span-5 flex flex-col items-center justify-center">
                             <div class="relative size-64">
-                                <div echarts [options]="donutChartOption()" [loading]="isDashboardLoading()" class="w-full h-full"></div>
+                                <div echarts [options]="donutChartOption()" [loading]="isDashboardLoading()"
+                                    (chartClick)="onDonutClick($event)"
+                                    theme="light" class="w-full h-full"></div>
                                 <div
                                     class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                     <span
-                                        class="text-slate-400 text-xs font-medium uppercase tracking-wide">Total</span>
-                                    <span class="text-slate-900 dark:text-white text-xl font-bold mt-1">100%</span>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-x-8 gap-y-3 mt-6">
-                                @for (cat of d.distribution.byCategory; track cat.name) {
-                                <div class="flex items-center gap-2">
-                                    <span class="size-3 rounded-full" [style.backgroundColor]="cat.color"></span>
-                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-300">
-                                        {{ cat.name }} ({{ cat.percentage }}%)
+                                        class="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                                        {{ selectedCategoryFilter() === 'ALL' ? 'Total Portfolio' : 'Segment Value' }}
+                                    </span>
+                                    <span class="text-slate-900 text-2xl font-black mt-1">
+                                        <app-rolling-number [value]="filteredTotalValue()" suffix="€"></app-rolling-number>
                                     </span>
                                 </div>
-                                }
                             </div>
                         </div>
 
-                        <!-- Treemap Chart -->
-                        <div class="lg:col-span-7 h-[28rem] w-full rounded-lg overflow-hidden flex flex-col">
-                            <div echarts [options]="treemapOption()" [loading]="isDashboardLoading()" class="w-full h-full"></div>
+                        <!-- TreeMap Chart -->
+                        <div class="lg:col-span-7 h-64">
+                            <div echarts [options]="treemapChartOption()" [loading]="isDashboardLoading()"
+                                theme="light" class="w-full h-full"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Listado de Activos -->
+                <!-- Asset List -->
                 <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col relative min-h-[400px]">
+                    class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col relative min-h-[400px]">
                     <div
-                        class="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div class="flex items-center gap-3">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Listado de Activos</h3>
+                            <h3 class="text-lg font-black text-slate-900">Activos en Cartera</h3>
                             @if (isAssetsLoading()) {
-                                <div class="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
+                            <div class="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent">
+                            </div>
                             }
                         </div>
                         <div class="flex items-center gap-3 w-full sm:w-auto">
-                            <div class="relative w-full sm:w-64">
+                            <div class="relative w-full sm:w-72 group">
                                 <span
-                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-primary transition-colors">search</span>
                                 <input [formControl]="searchControl"
-                                    class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                    placeholder="Buscar activo o ticker..." type="text" />
+                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold text-slate-900 focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                                    placeholder="Buscar por nombre o ticker..." type="text" />
                             </div>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto flex-1 relative">
                         @if (hasAssetsError()) {
-                            <div class="py-12">
-                                <app-error-state 
-                                    title="Error al cargar el listado" 
-                                    message="No se ha podido obtener la lista de activos. Por favor, inténtalo de nuevo."
-                                    (retry)="fetchAssets()">
-                                </app-error-state>
-                            </div>
+                        <div class="py-12">
+                            <app-error-state (retry)="fetchAssets()"></app-error-state>
+                        </div>
                         } @else {
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-slate-50 dark:bg-slate-900/50 sticky top-0 z-10">
-                                    <tr>
-                                        <th
-                                            class="py-4 px-6 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-700 dark:hover:text-slate-200 group flex items-center gap-1">
-                                            Nombre del Activo
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-50/50">
+                                <tr>
+                                    <th
+                                        class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                        Activo</th>
+                                    <th
+                                        class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                        Precio Actual</th>
+                                    <th
+                                        class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                        Valor Total</th>
+                                    <th
+                                        class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                        Resultado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50"
+                                [ngClass]="{'opacity-50 pointer-events-none': isAssetsLoading()}">
+                                @if (assetsPage(); as page) {
+                                @for (asset of page.content; track asset.id) {
+                                <tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer"
+                                    [ngClass]="{
+                                        'price-flash-up': asset.justUpdated === 'up',
+                                        'price-flash-down': asset.justUpdated === 'down'
+                                    }">
+                                    <td class="py-4 px-8">
+                                        <div class="flex items-center gap-4">
+                                            <div class="size-10 rounded-xl flex items-center justify-center shadow-sm border border-slate-100 bg-white group-hover:scale-110 transition-transform"
+                                                [style.color]="asset.color">
+                                                <span class="material-symbols-outlined text-xl">{{
+                                                    getAssetIcon(asset.iconType) }}</span>
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-slate-900 text-sm leading-tight">{{ asset.name
+                                                    }}</p>
+                                                <div class="flex items-center gap-2 mt-0.5">
+                                                    <span
+                                                        class="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-1.5 py-0.5 rounded">{{
+                                                        asset.subtitle }}</span>
+                                                    <span class="text-[10px] font-bold text-slate-400">{{ asset.portfolioPercentage
+                                                        | number:'1.1-1' }}% del total</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-8 text-right">
+                                        <p class="font-bold text-slate-900 text-sm transition-colors duration-300"
+                                           [ngClass]="{
+                                               'price-text-up': asset.justUpdated === 'up',
+                                               'price-text-down': asset.justUpdated === 'down'
+                                           }">{{ asset.value |
+                                            currency:'EUR':'symbol':'1.2-2' }}</p>
+                                    </td>
+                                    <td class="py-4 px-8 text-right">
+                                        <div class="flex flex-col items-end">
                                             <span
-                                                class="material-symbols-outlined text-[14px] opacity-0 group-hover:opacity-100 transition-opacity">arrow_downward</span>
-                                        </th>
-                                        <th
-                                            class="py-4 px-6 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
-                                            Valor de Mercado
-                                        </th>
-                                        <th
-                                            class="py-4 px-6 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
-                                            % Portafolio
-                                        </th>
-                                        <th
-                                            class="py-4 px-6 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
-                                            Rendimiento
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-slate-700" [ngClass]="{'opacity-50 pointer-events-none': isAssetsLoading()}">
-                                    @if (assetsPage(); as page) {
-                                        @for (asset of page.content; track asset.id) {
-                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                                            <td class="py-4 px-6">
-                                                <div class="flex items-center gap-3">
-                                                    <div class="bg-primary/10 text-primary p-2 rounded-lg">
-                                                        <span class="material-symbols-outlined text-[20px]">
-                                                            {{ asset.iconType === 'STOCK' ? 'show_chart' : (asset.iconType ===
-                                                            'CRYPTO' ? 'currency_bitcoin' : 'account_balance_wallet') }}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <p class="font-bold text-slate-900 dark:text-white text-sm">{{
-                                                            asset.name }}</p>
-                                                        <p class="text-xs text-slate-500 dark:text-slate-400">{{ asset.subtitle
-                                                            }}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="py-4 px-6 text-right">
-                                                <p class="font-bold text-slate-900 dark:text-white text-sm">
-                                                    {{ asset.value | currency:'EUR':'symbol':'1.2-2' }}
-                                                </p>
-                                            </td>
-                                            <td class="py-4 px-6 text-right">
-                                                <div class="flex items-center justify-end gap-2">
-                                                    <div
-                                                        class="w-16 h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                                        <div class="h-full bg-primary"
-                                                            [style.width.%]="asset.portfolioPercentage"></div>
-                                                    </div>
-                                                    <span class="text-slate-600 dark:text-slate-300 text-xs font-bold">{{
-                                                        asset.portfolioPercentage }}%</span>
-                                                </div>
-                                            </td>
-                                            <td class="py-4 px-6 text-right">
-                                                <span
-                                                    [ngClass]="{'text-green-600 bg-green-50 dark:bg-green-900/20': asset.trend === 'UP', 'text-red-600 bg-red-50 dark:bg-red-900/20': asset.trend === 'DOWN', 'text-slate-400 bg-slate-100 dark:bg-slate-700': asset.trend === 'STABLE'}"
-                                                    class="inline-flex items-center gap-1 text-xs font-bold px-2 py-1 rounded">
-                                                    <span class="material-symbols-outlined text-[14px]">
-                                                        {{ asset.trend === 'UP' ? 'trending_up' : (asset.trend === 'DOWN' ?
-                                                        'trending_down' : 'remove') }}
-                                                    </span>
-                                                    {{ asset.performance >= 0 ? '+' : '' }}{{ asset.performance }}%
+                                                [ngClass]="asset.performance >= 0 ? 'text-emerald-500' : 'text-rose-500'"
+                                                class="text-sm font-black tracking-tight">
+                                                {{ asset.performance >= 0 ? '+' : '' }}{{ asset.performance |
+                                                number:'1.1-1' }}%
+                                            </span>
+                                            <div class="flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-[14px]"
+                                                    [ngClass]="asset.trend === 'UP' ? 'text-emerald-400' : asset.trend === 'DOWN' ? 'text-rose-400' : 'text-slate-300'">
+                                                    {{ asset.trend === 'UP' ? 'trending_up' : asset.trend === 'DOWN' ? 'trending_down' : 'trending_flat' }}
                                                 </span>
-                                            </td>
-                                        </tr>
-                                        }
-                                        @if (page.content.length === 0) {
-                                            <tr>
-                                                <td colspan="4" class="py-12 text-center">
-                                                    <p class="text-slate-500">No se encontraron activos con esa búsqueda.</p>
-                                                </td>
-                                            </tr>
-                                        }
-                                    }
-                                </tbody>
-                            </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                                @if (page.content.length === 0) {
+                                <tr>
+                                    <td colspan="4" class="py-20 text-center">
+                                        <div
+                                            class="size-16 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
+                                            <span
+                                                class="material-symbols-outlined text-slate-200 text-4xl">folder_off</span>
+                                        </div>
+                                        <p class="text-slate-900 font-black tracking-tight">No hay activos</p>
+                                        <p class="text-slate-400 text-xs mt-1">Tu búsqueda no ha devuelto ningún
+                                            resultado.</p>
+                                    </td>
+                                </tr>
+                                }
+                                }
+                            </tbody>
+                        </table>
                         }
                     </div>
 
-                    <!-- Pagination Controls -->
-                    <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
-                        <span class="text-xs text-slate-500 font-medium">
+                    <!-- Pagination -->
+                    <div class="p-5 border-t border-slate-100 flex items-center justify-between bg-slate-50/30">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                             @if (assetsPage(); as page) {
-                                Mostrando {{ page.number * page.size + 1 }} - {{ (page.number * page.size) + page.content.length }} de {{ page.totalElements }} activos
+                            {{ page.totalElements }} activos totales
                             }
                         </span>
                         <div class="flex items-center gap-2">
                             <button (click)="prevPage()" [disabled]="currentPage() === 0"
-                                class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-                                <span class="material-symbols-outlined text-sm">chevron_left</span>
+                                class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-primary hover:border-primary/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                                <span class="material-symbols-outlined text-lg">chevron_left</span>
                             </button>
-                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300 px-2">
-                                Página {{ currentPage() + 1 }}
-                            </span>
-                            <button (click)="nextPage()" [disabled]="currentPage() >= (assetsPage()?.totalPages || 1) - 1"
-                                class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-                                <span class="material-symbols-outlined text-sm">chevron_right</span>
+                            <div
+                                class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-900 uppercase tracking-widest">
+                                Página {{ currentPage() + 1 }} de {{ assetsPage()?.totalPages || 1 }}
+                            </div>
+                            <button (click)="nextPage()"
+                                [disabled]="currentPage() >= (assetsPage()?.totalPages || 1) - 1"
+                                class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-primary hover:border-primary/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                                <span class="material-symbols-outlined text-lg">chevron_right</span>
                             </button>
                         </div>
                     </div>

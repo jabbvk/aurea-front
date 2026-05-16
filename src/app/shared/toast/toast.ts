@@ -4,6 +4,7 @@ import { ToastService, Toast } from './toast.service';
 
 @Component({
   selector: 'app-toast',
+  standalone: true,
   imports: [CommonModule],
   template: `
     <div class="toast-container">
@@ -167,51 +168,6 @@ import { ToastService, Toast } from './toast.service';
     .toast-info .toast-icon {
       background: rgba(59, 130, 246, 0.12);
       color: #2563eb;
-    }
-
-    /* ── Dark mode ── */
-    :host-context(.dark) .toast-success {
-      background: rgba(6, 78, 59, 0.9);
-      border-color: rgba(16, 185, 129, 0.25);
-      color: #a7f3d0;
-    }
-    :host-context(.dark) .toast-success .toast-icon {
-      background: rgba(16, 185, 129, 0.2);
-      color: #34d399;
-    }
-
-    :host-context(.dark) .toast-error {
-      background: rgba(127, 29, 29, 0.9);
-      border-color: rgba(239, 68, 68, 0.25);
-      color: #fecaca;
-    }
-    :host-context(.dark) .toast-error .toast-icon {
-      background: rgba(239, 68, 68, 0.2);
-      color: #f87171;
-    }
-
-    :host-context(.dark) .toast-warning {
-      background: rgba(120, 53, 15, 0.9);
-      border-color: rgba(245, 158, 11, 0.25);
-      color: #fde68a;
-    }
-    :host-context(.dark) .toast-warning .toast-icon {
-      background: rgba(245, 158, 11, 0.2);
-      color: #fbbf24;
-    }
-
-    :host-context(.dark) .toast-info {
-      background: rgba(30, 58, 138, 0.9);
-      border-color: rgba(59, 130, 246, 0.25);
-      color: #bfdbfe;
-    }
-    :host-context(.dark) .toast-info .toast-icon {
-      background: rgba(59, 130, 246, 0.2);
-      color: #60a5fa;
-    }
-
-    :host-context(.dark) .toast-close:hover {
-      background: rgba(255, 255, 255, 0.1);
     }
   `],
 })

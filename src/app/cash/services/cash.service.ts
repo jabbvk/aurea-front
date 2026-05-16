@@ -2,13 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
 import { Observable, of } from 'rxjs';
 
-export interface CashSummary {
-  walletBalance: number;
-  emergencyFundBalance: number;
-  totalLiquidCash: number;
-  monthlyChange: number;
-  monthlyChangePercentage: number;
-}
+import { CashAccount, CashMovement, CashTransferRequest, CashHistoryPageResponse } from '../models/cash.model';
+
+export * from '../models/cash.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,14 +12,25 @@ export interface CashSummary {
 export class CashService {
   private readonly api = inject(ApiService);
 
-  getCashSummary(): Observable<CashSummary> {
-    // For now, return mock data since we are building the UI
-    return of({
-      walletBalance: 12500.50,
-      emergencyFundBalance: 45000.00,
-      totalLiquidCash: 57500.50,
-      monthlyChange: 1250.75,
-      monthlyChangePercentage: 2.3
-    });
+  getAccounts(): Observable<CashAccount[]> {
+    return this.api.get<CashAccount[]>('/aurea/cash');
+  }
+
+  getHistory(page: number = 0, size: number = 10, query: string = ''): Observable<CashHistoryPageResponse> {
+    const params: any = {
+      page: page.toString(),
+      size: size.toString(),
+      sort: 'date,desc'
+    };
+
+    if (query && query.trim() !== '') {
+      params.query = query.trim();
+    }
+
+    return this.api.get<CashHistoryPageResponse>('/aurea/cash/history', params);
+  }
+
+  transfer(request: CashTransferRequest): Observable<void> {
+    return this.api.post<void>('/aurea/cash/transfer', request);
   }
 }

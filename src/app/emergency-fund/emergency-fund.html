@@ -1,195 +1,190 @@
 <div
-    class="bg-background-light text-slate-900 dark:bg-background-dark dark:text-slate-100 font-display transition-colors duration-200 no-scroll-layout flex h-screen w-full overflow-hidden">
+    class="bg-background-light text-slate-900 font-display transition-colors duration-200 no-scroll-layout flex h-screen w-full overflow-hidden">
     <app-sidebar></app-sidebar>
 
-    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-background-light dark:bg-background-dark">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-background-light">
         <header
-            class="sticky top-0 z-20 flex items-center justify-between px-8 py-6 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-transparent dark:border-slate-800">
+            class="sticky top-0 z-20 flex items-center justify-between px-8 py-6 bg-background-light/95 backdrop-blur-sm border-b border-transparent">
             <div class="flex items-center gap-4">
                 <!-- Title removed as requested for consistency -->
             </div>
             <div class="flex items-center gap-4">
-                <div
-                    class="bg-white dark:bg-[#2a1a1a] border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 shadow-sm flex items-center gap-3 h-[42px] transition-all duration-300"
-                    [class.border-primary]="isFundActive()">
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input class="sr-only peer" type="checkbox" [checked]="isFundActive()" (change)="toggleFundActive()" />
+                <div class="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-sm flex items-center gap-3 h-[42px] transition-all duration-300"
+                    [class.border-primary]="fundActive()" [class.ring-2]="fundActive()"
+                    [class.ring-primary/10]="fundActive()">
+                    <label class="relative inline-flex items-center cursor-pointer"
+                        [class.pointer-events-none]="isLoading()">
+                        <input class="sr-only peer" type="checkbox" [checked]="fundActive()" [disabled]="isLoading()"
+                            (change)="toggleFundActive()" />
                         <div
-                            class="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/20 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
+                            class="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary shadow-inner">
                         </div>
                     </label>
-                    <span class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-tight"
-                        [class.text-primary]="isFundActive()">Fondo Activo</span>
+                    <span
+                        class="text-xs font-bold text-slate-600 uppercase tracking-tight transition-colors duration-300"
+                        [class.text-primary]="fundActive()">Fondo Activo</span>
                 </div>
-                <app-action-button 
-                    label="Aportar al Fondo" 
-                    icon="savings" 
-                    (action)="modalService.open('emergency-fund', true)">
+                <app-action-button label="Realizar traspaso" [disabled]="isLoading() || !fundActive()"
+                    (action)="modalService.open('cash', true, 'emergency-fund')">
                 </app-action-button>
             </div>
         </header>
 
-        <div class="flex-1 px-8 pb-8 pt-4 overflow-y-auto overflow-x-hidden flex flex-col gap-6">
-
-            @if (showTip()) {
-            <div
-                class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900/50 flex gap-3 items-start md:items-center w-full relative group">
-                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 flex-shrink-0">info</span>
-                <p class="text-sm text-blue-800 dark:text-blue-300 leading-snug flex-1 pr-6">
-                    Recuerda que los expertos recomiendan tener entre 3 y 6 meses de gastos cubiertos en tu fondo de
-                    emergencia para una salud financiera óptima.
-                </p>
-                <button (click)="closeTip()"
-                    class="absolute top-2 right-2 p-1 text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300 transition-colors rounded-full hover:bg-blue-100 dark:hover:bg-blue-800/50">
-                    <span class="material-symbols-outlined text-lg">close</span>
-                </button>
+        <div class="flex-1 px-6 pb-6 pt-4 overflow-y-auto overflow-x-hidden flex flex-col gap-4">
+            @if (isLoading()) {
+            <!-- Skeleton Loader -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100 h-32 animate-pulse">
+                    <div class="h-4 w-24 bg-slate-100 rounded mb-4"></div>
+                    <div class="h-10 w-32 bg-slate-100 rounded mb-2"></div>
+                    <div class="h-3 w-40 bg-slate-100 rounded"></div>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100 h-32 animate-pulse">
+                    <div class="h-4 w-24 bg-slate-100 rounded mb-4"></div>
+                    <div class="h-10 w-32 bg-slate-100 rounded mb-2"></div>
+                    <div class="h-1.5 w-full bg-slate-100 rounded-full mt-4"></div>
+                </div>
             </div>
-            }
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 h-96 animate-pulse">
+                <div class="h-6 w-48 bg-slate-100 rounded mb-2"></div>
+                <div class="h-4 w-64 bg-slate-100 rounded mb-8"></div>
+                <div class="space-y-4">
+                    <div class="h-20 w-full bg-slate-100 rounded-xl"></div>
+                    <div class="h-20 w-full bg-slate-100 rounded-xl"></div>
+                    <div class="h-20 w-full bg-slate-100 rounded-xl"></div>
+                </div>
+            </div>
+            } @else {
 
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 transition-all duration-500"
-                    [class.opacity-60]="!isFundActive()" [class.grayscale]="!isFundActive()">
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 transition-all duration-500"
+                    [class.opacity-60]="!fundActive()" [class.grayscale]="!fundActive()">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400 text-[12px] font-medium">Cobertura actual</p>
-                            <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
-                                {{ coverageMonths() | number:'1.1-1' }}
+                            <p class="text-slate-500 text-[12px] font-medium">Cobertura actual
+                            </p>
+                            <h3 class="text-3xl font-extrabold text-slate-900 mt-1">
+                                {{ (monthlyExpenses() > 0 ? coverageMonths() : 0) | number:'1.1-1' }}
                                 <span class="text-sm text-slate-500 font-bold ml-1 uppercase">meses</span>
                             </h3>
                         </div>
                         <span
-                            class="material-symbols-outlined text-green-600 bg-green-50 dark:bg-green-900/20 rounded-full p-1.5 text-[20px]">trending_up</span>
+                            class="material-symbols-outlined text-green-600 bg-green-50 rounded-full p-1.5 text-[20px]">trending_up</span>
                     </div>
-                    <p class="text-green-600 text-[11px] font-bold mt-3 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">arrow_upward</span> +0.2 meses este mes
-                    </p>
                 </div>
-                <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 transition-all duration-500"
-                    [class.opacity-60]="!isFundActive()" [class.grayscale]="!isFundActive()">
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 transition-all duration-500"
+                    [class.opacity-60]="!fundActive()" [class.grayscale]="!fundActive()">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400 text-[12px] font-medium">Total ahorrado</p>
-                            <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+                            <p class="text-slate-500 text-[12px] font-medium">Total ahorrado</p>
+                            <h3 class="text-3xl font-extrabold text-slate-900 mt-1">
                                 {{ currentSavings() | currency:'EUR':'symbol':'1.0-0' }}
                             </h3>
                             <p class="text-[11px] text-slate-500 mt-1 font-medium">
-                                {{ progressPercent() | number:'1.0-0' }}% del objetivo ({{ targetAmount() |
+                                {{ (targetAmount() > 0 ? progressPercent() : 0) | number:'1.0-0' }}% del objetivo ({{
+                                targetAmount() |
                                 currency:'EUR':'symbol':'1.0-0' }})
                             </p>
                         </div>
                         <span
                             class="material-symbols-outlined text-primary bg-primary/10 rounded-full p-1.5 text-[20px]">savings</span>
                     </div>
-                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden mt-4">
-                        <div class="bg-primary h-1.5 rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(236,19,19,0.3)]"
-                            [style.width.%]="progressPercent()"></div>
+                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mt-4">
+                        <div class="bg-primary h-1.5 rounded-full transition-all duration-500"
+                            [style.width.%]="targetAmount() > 0 ? progressPercent() : 0"></div>
                     </div>
                 </div>
             </section>
-            
+
             <div class="flex flex-col gap-6 w-full relative group">
                 <!-- Overlay Message when disabled -->
-                @if (!isFundActive()) {
-                <div class="absolute inset-0 z-10 flex items-center justify-center bg-background-light/20 dark:bg-background-dark/20 backdrop-blur-[2px] rounded-2xl pointer-events-none transition-all duration-500">
-                    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-full shadow-xl flex items-center gap-3 animate-in fade-in zoom-in duration-300">
+                @if (!fundActive()) {
+                <div
+                    class="absolute inset-0 z-10 flex items-center justify-center bg-background-light/20 backdrop-blur-[2px] rounded-2xl pointer-events-none transition-all duration-500">
+                    <div
+                        class="bg-white border border-slate-200 px-6 py-3 rounded-full shadow-xl flex items-center gap-3 animate-in fade-in zoom-in duration-300">
                         <span class="material-symbols-outlined text-primary">lock</span>
-                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Activa el fondo para configurar tus metas</span>
+                        <span class="text-sm font-bold text-slate-700">Activa el fondo para
+                            configurar tus metas</span>
                     </div>
                 </div>
                 }
 
                 <!-- Modo de Cálculo (Full Width) -->
-                <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 transition-all duration-500"
-                    [class.opacity-40]="!isFundActive()" [class.grayscale]="!isFundActive()" [class.pointer-events-none]="!isFundActive()">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 transition-all duration-500"
+                    [class.opacity-40]="!fundActive()" [class.grayscale]="!fundActive()"
+                    [class.pointer-events-none]="!fundActive()">
                     <div class="mb-8">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Modo de cálculo</h3>
+                        <h3 class="text-lg font-bold text-slate-900">Modo de cálculo</h3>
                         <p class="text-slate-500 text-xs mt-1 font-medium">Define cómo Aurea determinará tu meta de
                             ahorro mensual basándose en tu estilo de vida.</p>
                     </div>
 
                     <div class="space-y-4">
-                        <label (click)="setCalculationMode('fixed')"
-                            class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all duration-200 group"
-                            [ngClass]="calculationMode() === 'fixed' ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-primary/50'">
+                        <label
+                            class="relative flex rounded-xl border p-4 shadow-sm focus:outline-none transition-all duration-200 group opacity-50 cursor-not-allowed pointer-events-none bg-slate-50"
+                            [ngClass]="calculationMode() === 'FIXED' ? 'border-primary bg-primary/5' : 'bg-white border-slate-200 hover:border-primary/50'">
                             <span class="flex flex-1">
                                 <span class="flex flex-col">
                                     <span
-                                        class="block text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Solo
-                                        gastos fijos</span>
-                                    <span
-                                        class="mt-1 flex items-center text-xs text-slate-500 dark:text-slate-400">Protege
+                                        class="block text-sm font-bold text-slate-400 group-hover:text-primary transition-colors">Solo
+                                        gastos fijos <span
+                                            class="ml-2 text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">Próximamente</span></span>
+                                    <span class="mt-1 flex items-center text-xs text-slate-400">Protege
                                         lo esencial: alquiler, hipoteca, suministros y préstamos. Ideal para una red
                                         de seguridad básica.</span>
                                 </span>
                             </span>
                             <span class="material-symbols-outlined text-primary"
-                                [class.invisible]="calculationMode() !== 'fixed'">check_circle</span>
+                                [class.invisible]="calculationMode() !== 'FIXED'">check_circle</span>
                         </label>
 
-                        <label (click)="setCalculationMode('variable')"
-                            class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all duration-200 group"
-                            [ngClass]="calculationMode() === 'variable' ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-primary/50'">
+                        <label
+                            class="relative flex rounded-xl border p-4 shadow-sm focus:outline-none transition-all duration-200 group opacity-50 cursor-not-allowed pointer-events-none bg-slate-50"
+                            [ngClass]="calculationMode() === 'VARIABLE' ? 'border-primary bg-primary/5' : 'bg-white border-slate-200 hover:border-primary/50'">
                             <span class="flex flex-1">
                                 <span class="flex flex-col w-full">
                                     <div class="flex justify-between items-center w-full">
                                         <span
-                                            class="block text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Gastos
-                                            fijos + variables</span>
+                                            class="block text-sm font-bold text-slate-400 group-hover:text-primary transition-colors">Gastos
+                                            fijos + variables <span
+                                                class="ml-2 text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">Próximamente</span></span>
                                         <span class="material-symbols-outlined text-primary"
-                                            [class.invisible]="calculationMode() !== 'variable'">check_circle</span>
+                                            [class.invisible]="calculationMode() !== 'VARIABLE'">check_circle</span>
                                     </div>
-                                    <span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">La opción
+                                    <span class="mt-1 block text-xs text-slate-400">La opción
                                         más completa. Incluye alimentación, transporte y ocio, asegurando que tu
                                         nivel de vida se mantenga intacto.</span>
-
-                                    @if (calculationMode() === 'variable') {
-                                    <div
-                                        class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 w-full max-w-xs">
-                                        <label class="block text-xs font-medium text-slate-500 mb-2">Periodo de
-                                            referencia</label>
-                                        <div class="relative">
-                                            <select
-                                                class="block w-full rounded-lg border-0 py-2.5 pl-3 pr-10 text-xs font-bold text-slate-900 dark:text-white dark:bg-slate-900 ring-1 ring-inset ring-slate-200 dark:ring-slate-700 focus:ring-2 focus:ring-primary cursor-pointer outline-none shadow-sm">
-                                                <option>Media último año</option>
-                                                <option>Media histórica</option>
-                                                <option>Últimos 3 meses</option>
-                                            </select>
-                                            <div
-                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-slate-400">
-                                                <span class="material-symbols-outlined text-base">expand_more</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    }
                                 </span>
                             </span>
                         </label>
 
-                        <label (click)="setCalculationMode('manual')"
+                        <label
                             class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all duration-200 group"
-                            [ngClass]="calculationMode() === 'manual' ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-primary/50'">
+                            [ngClass]="calculationMode() === 'MANUAL' ? 'border-primary bg-primary/5' : 'bg-white border-slate-200 hover:border-primary/50'">
                             <span class="flex flex-1">
                                 <span class="flex flex-col w-full">
                                     <div class="flex justify-between items-center w-full">
                                         <span
-                                            class="block text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Monto
+                                            class="block text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">Monto
                                             personalizado</span>
                                         <span class="material-symbols-outlined text-primary"
-                                            [class.invisible]="calculationMode() !== 'manual'">check_circle</span>
+                                            [class.invisible]="calculationMode() !== 'MANUAL'">check_circle</span>
                                     </div>
-                                    <span
-                                        class="mt-1 flex items-center text-xs text-slate-500 dark:text-slate-400">Si
+                                    <span class="mt-1 flex items-center text-xs text-slate-500">Si
                                         ya tienes una cifra en mente, defínela aquí manualmente sin depender de tus
                                         registros históricos.</span>
 
-                                    @if (calculationMode() === 'manual') {
-                                    <div class="mt-4">
+                                    @if (calculationMode() === 'MANUAL') {
+                                    <div class="mt-4 flex gap-3">
                                         <input
-                                            class="block w-full rounded-lg border-0 py-2.5 px-4 text-sm font-bold text-slate-900 dark:text-white dark:bg-slate-900 ring-1 ring-inset ring-slate-200 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-primary outline-none shadow-sm"
-                                            placeholder="0,00 €" type="text" />
+                                            class="flex-1 rounded-lg border-0 py-2.5 px-4 text-sm font-bold text-slate-900 bg-white ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-primary outline-none shadow-sm"
+                                            placeholder="0,00 €" type="number" #manualInput
+                                            [value]="monthlyExpenses()" />
+                                        <button (click)="updateManualExpense(+manualInput.value)"
+                                            class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-lg shadow-primary/25 transition-all transform active:scale-95 disabled:opacity-50">
+                                            Confirmar
+                                        </button>
                                     </div>
                                     }
                                 </span>
@@ -199,28 +194,31 @@
                 </div>
 
                 <!-- Cobertura Deseada (Full Width) -->
-                <div
-                    class="bg-white dark:bg-[#2a1a1a] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 transition-all duration-500"
-                    [class.opacity-40]="!isFundActive()" [class.grayscale]="!isFundActive()" [class.pointer-events-none]="!isFundActive()">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 transition-all duration-500"
+                    [class.opacity-40]="!fundActive()" [class.grayscale]="!fundActive()"
+                    [class.pointer-events-none]="!fundActive()">
                     <div class="flex justify-between items-end mb-8">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Cobertura deseada</h3>
-                            <p class="text-slate-500 text-xs mt-1 font-medium">Ajusta el número de meses.</p>
+                            <h3 class="text-lg font-bold text-slate-900">Cobertura deseada</h3>
+                            <p class="text-slate-500 text-xs mt-1 font-medium">Ajusta el número de meses basándote
+                                en tu perfil de riesgo.</p>
                         </div>
                         <div class="text-right">
-                            <span class="text-3xl font-extrabold text-primary">{{ desiredMonths() }}</span>
+                            <span class="text-3xl font-extrabold text-primary">{{
+                                desiredMonths() }}</span>
                             <span class="text-slate-500 font-bold ml-1 text-sm">meses</span>
                         </div>
                     </div>
                     <div class="relative w-full h-12 flex items-center px-2">
                         <input
-                            class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full appearance-none cursor-pointer accent-primary transition-all"
+                            class="w-full h-1.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-primary transition-all"
                             max="24" min="1" type="range" [value]="desiredMonths()" (input)="updateMonths($event)" />
                         <div class="absolute top-8 left-2 text-[10px] text-slate-400 font-medium">1 mes</div>
                         <div class="absolute top-8 right-2 text-[10px] text-slate-400 font-medium">24 meses</div>
                     </div>
                 </div>
             </div>
+            }
         </div>
     </main>
 </div>

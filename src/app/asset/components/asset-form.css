@@ -14,11 +14,6 @@
   animation: dropdown-in 0.15s ease-out;
 }
 
-:host-context(.dark) .search-dropdown {
-  background: #2a1a1a;
-  border-color: #334155;
-}
-
 @keyframes dropdown-in {
   from {
     opacity: 0;
@@ -37,8 +32,4 @@
 .search-dropdown::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 2px;
-}
-
-:host-context(.dark) .search-dropdown::-webkit-scrollbar-thumb {
-  background: #475569;
 }

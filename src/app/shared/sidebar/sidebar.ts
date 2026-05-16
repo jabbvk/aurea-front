@@ -1,10 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { ComingSoonService } from '../coming-soon-modal/coming-soon-service';
 import { filter } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
