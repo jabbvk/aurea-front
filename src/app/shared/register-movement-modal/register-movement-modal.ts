@@ -101,7 +101,6 @@ export class RegisterMovementModal {
       description: data.description,
       category: data.category,
       frequency: data.frequency,
-      balanceSource: data.balanceSource,
       cashAccountId: data.cashAccountId || null
     }).subscribe({
       next: () => {

@@ -21,7 +21,7 @@ export class Login {
 
   loginForm = this.fb.group({
     email: ['javiertarancon777@gmail.com', [Validators.required, Validators.email]],
-    password: ['asdasdfj34723JDF·$·$', [Validators.required]]
+    password: ['asdasdfj34723JDF·$·$a', [Validators.required]]
   });
 
   isLoading = false;

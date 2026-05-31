@@ -9,7 +9,7 @@
           @else { add_circle }
         </span>
         @if (modalService.activeTab() === 'cash') { Realizar Traspaso }
-        @else if (modalService.activeTab() === 'asset') { Gestionar Activo }
+        @else if (modalService.activeTab() === 'asset') { Comprar Activo }
         @else { Registrar Movimiento }
       </h3>
       <button (click)="close()"
@@ -23,18 +23,16 @@
       <!-- Tabs -->
       @if (!modalService.hideTabs()) {
       <div class="mb-8">
-        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Tipo de Transacción</label>
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Tipo de
+          Transacción</label>
         <div class="grid grid-cols-5 gap-1 p-1 bg-slate-100 rounded-lg">
           @for (tab of tabs; track tab.value) {
-            <button
-              (click)="selectTab(tab.value)"
-              class="py-2 text-sm rounded-md transition-all"
-              [ngClass]="{
+          <button (click)="selectTab(tab.value)" class="py-2 text-sm rounded-md transition-all" [ngClass]="{
                 'font-bold bg-white text-primary shadow-sm ring-1 ring-slate-200': modalService.activeTab() === tab.value,
                 'font-medium text-slate-500 hover:text-slate-700 hover:bg-white': modalService.activeTab() !== tab.value
               }">
-              {{ tab.label }}
-            </button>
+            {{ tab.label }}
+          </button>
           }
         </div>
       </div>
@@ -42,11 +40,11 @@
 
       <!-- Form content -->
       @switch (modalService.activeTab()) {
-        @case ('income') { <app-income-form /> }
-        @case ('expense') { <app-expense-form /> }
-        @case ('asset') { <app-asset-form /> }
-        @case ('debt') { <app-debt-form /> }
-        @case ('cash') { <app-cash-form /> }
+      @case ('income') { <app-income-form /> }
+      @case ('expense') { <app-expense-form /> }
+      @case ('asset') { <app-asset-form /> }
+      @case ('debt') { <app-debt-form /> }
+      @case ('cash') { <app-cash-form /> }
       }
     </div>
 
@@ -56,17 +54,16 @@
         class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-white transition-colors focus:ring-2 focus:ring-slate-200">
         Cancelar
       </button>
-      <button (click)="onConfirm()"
-        [disabled]="isSubmitting()"
+      <button (click)="onConfirm()" [disabled]="isSubmitting()"
         class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold shadow-lg shadow-primary/25 transition-all transform active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
         @if (isSubmitting()) {
-          <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-          </svg>
-          Confirmando...
+        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Confirmando...
         } @else {
-          Confirmar
+        Confirmar
         }
       </button>
     </div>

@@ -1,11 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
-import { 
-  AssetDashboardResponse, 
-  AssetPageResponse, 
-  Asset, 
-  AssetClass 
+import {
+  AssetDashboardResponse,
+  AssetPageResponse,
+  Asset,
+  AssetClass,
+  PerformancePoint,
+  PortfolioPeriod,
+  SellAssetRequest,
+  AssetResponse
 } from '../models/asset.model';
 
 @Injectable({
@@ -23,16 +27,20 @@ export class AssetService {
     '#ef4444', // Rojo
     '#8b5cf6', // Violeta
     '#ec4899', // Rosa
-    '#06b6d4', // Cian
-    '#f97316', // Naranja
     '#14b8a6', // Teal
-    '#6366f1', // Índigo
-    '#84cc16', // Lima
+    '#f97316', // Naranja
+    '#06b6d4', // cian
     '#a855f7', // Púrpura
+    '#6366f1', // Indigo
+    '#84cc16', // Lima
+    '#eab308', // Amarillo
     '#d946ef', // Fuchsia
-    '#f43f5e', // Rosa Intenso
-    '#22d3ee'  // Cielo
+    '#64748b'  // Slate
   ];
+
+  getColor(index: number): string {
+    return this.PALETTE[index];
+  }
 
   /**
    * Genera un color consistente basado en el ticker del activo.
@@ -40,30 +48,38 @@ export class AssetService {
    */
   getAssetColor(ticker: string): string {
     if (!ticker) return this.PALETTE[0];
-    
+
     let hash = 0;
     for (let i = 0; i < ticker.length; i++) {
       hash = ticker.charCodeAt(i) + ((hash << 5) - hash);
     }
-    
+
     const index = Math.abs(hash) % this.PALETTE.length;
     return this.PALETTE[index];
   }
 
-  getDashboard(): Observable<AssetDashboardResponse> {
-    return this.api.get<AssetDashboardResponse>(`${this.apiUrl}/dashboard`);
+  getDashboard(period?: PortfolioPeriod): Observable<AssetDashboardResponse> {
+    const params = period ? { period } : {};
+    return this.api.get<AssetDashboardResponse>(`${this.apiUrl}/dashboard`, params);
+  }
+
+  /**
+   * Obtiene el histórico de rendimiento filtrado por período
+   */
+  getPerformanceChart(period: PortfolioPeriod = PortfolioPeriod.SIX_MONTHS): Observable<PerformancePoint[]> {
+    return this.api.get<PerformancePoint[]>(`${this.apiUrl}/performance`, { period });
   }
 
   getAssetsPage(
-    page: number = 0, 
-    size: number = 10, 
+    page: number = 0,
+    size: number = 10,
     query: string = ''
   ): Observable<AssetPageResponse> {
     return this.api.get<AssetPageResponse>(this.apiUrl, {
-      page: page.toString(), 
-      size: size.toString(), 
-      query, 
-      sort: 'purchaseDate,desc' 
+      page: page.toString(),
+      size: size.toString(),
+      query,
+      sort: 'purchaseDate,desc'
     });
   }
 
@@ -72,15 +88,13 @@ export class AssetService {
   }
 
   updateValue(assetId: string, newValue: number): Observable<Asset> {
-    return this.api.patch<Asset>(`${this.apiUrl}/${assetId}/value`, { 
-      currentValue: newValue 
+    return this.api.patch<Asset>(`${this.apiUrl}/${assetId}/value`, {
+      currentValue: newValue
     });
   }
 
-  sellAsset(assetId: string, cashAccountId: string): Observable<void> {
-    return this.api.post<void>(`${this.apiUrl}/${assetId}/sell`, { 
-      cashAccountId 
-    });
+  sellAsset(assetId: string, request: SellAssetRequest): Observable<AssetResponse> {
+    return this.api.post<AssetResponse>(`${this.apiUrl}/${assetId}/sell`, request);
   }
 
   createAsset(data: any): Observable<Asset> {

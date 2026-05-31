@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.no-scroll-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Override de estilos para el componente app-select dentro del selector de mes */
+:host ::ng-deep .month-select app-select button {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  border-radius: 0.75rem !important;
+}

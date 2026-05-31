@@ -8,7 +8,7 @@
             <div class="flex items-center gap-4">
             </div>
             <div class="flex items-center gap-4">
-                <app-action-button label="Gestionar Activos" [disabled]="isDashboardLoading()"
+                <app-action-button label="Comprar Activos" [disabled]="isDashboardLoading()"
                     (action)="modalService.open('asset', true)"></app-action-button>
             </div>
         </header>
@@ -26,19 +26,96 @@
                         <div class="hidden sm:block w-px h-12 bg-slate-100"></div>
                         <div class="flex flex-col gap-2">
                             <div class="h-3 w-32 bg-slate-200 rounded"></div>
-                            <div class="h-9 w-48 bg-slate-200 rounded"></div>
+                            <div class="flex items-center gap-3">
+                                <div class="h-9 w-32 bg-slate-200 rounded"></div>
+                                <div class="h-6 w-16 bg-slate-200 rounded"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evolution Skeleton -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="h-6 w-6 rounded bg-slate-200"></div>
+                        <div class="h-5 w-48 bg-slate-200 rounded"></div>
+                    </div>
+                    <div class="h-64 bg-slate-50/50 rounded-xl border border-slate-100"></div>
+                </div>
+
                 <!-- Distribution Skeleton -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-[400px]">
-                    <div class="h-5 w-48 bg-slate-200 rounded mb-8"></div>
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <div class="flex items-center gap-2">
+                            <div class="h-6 w-6 rounded bg-slate-200"></div>
+                            <div class="h-5 w-48 bg-slate-200 rounded"></div>
+                        </div>
+                        <div class="h-10 w-64 bg-slate-100 rounded-xl"></div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                         <div class="lg:col-span-5 flex justify-center">
                             <div class="size-64 rounded-full border-[20px] border-slate-100"></div>
                         </div>
-                        <div class="lg:col-span-7 h-64 bg-slate-50/50 rounded-xl"></div>
+                        <div class="lg:col-span-7 h-64 bg-slate-50/50 rounded-xl border border-slate-100"></div>
+                    </div>
+                </div>
+
+                <!-- Asset List Skeleton -->
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-[400px]">
+                    <div
+                        class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="h-6 w-48 bg-slate-200 rounded"></div>
+                        <div class="h-10 w-full sm:w-72 bg-slate-100 rounded-xl"></div>
+                    </div>
+                    <div class="flex-1 p-0 overflow-hidden">
+                        <div
+                            class="bg-slate-50/50 border-b border-slate-100 px-8 py-4 flex items-center justify-between">
+                            <div class="h-3 w-24 bg-slate-200 rounded flex-1"></div>
+                            <div class="h-3 w-16 bg-slate-200 rounded flex-1 text-right mx-4"></div>
+                            <div class="h-3 w-16 bg-slate-200 rounded flex-1 text-right mx-4"></div>
+                            <div class="h-3 w-16 bg-slate-200 rounded flex-1 text-right mx-4"></div>
+                            <div class="h-3 w-16 bg-slate-200 rounded flex-1 text-right mx-4"></div>
+                            <div class="h-3 w-16 bg-slate-200 rounded flex-1 text-right mx-4"></div>
+                            <div class="h-3 w-16 bg-slate-200 rounded w-24 ml-4"></div>
+                        </div>
+                        <div class="divide-y divide-slate-50">
+                            @for (i of [1,2,3,4,5]; track i) {
+                            <div class="px-8 py-4 flex items-center justify-between">
+                                <div class="flex items-center gap-4 flex-1">
+                                    <div class="size-10 rounded-xl bg-slate-100"></div>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="h-4 w-32 bg-slate-200 rounded"></div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-3 w-12 bg-slate-100 rounded"></div>
+                                            <div class="h-3 w-24 bg-slate-100 rounded"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 flex justify-end mx-4">
+                                    <div class="h-5 w-16 bg-slate-100 rounded"></div>
+                                </div>
+                                <div class="flex-1 flex justify-end mx-4">
+                                    <div class="h-5 w-16 bg-slate-100 rounded"></div>
+                                </div>
+                                <div class="flex-1 flex justify-end mx-4">
+                                    <div class="h-5 w-16 bg-slate-100 rounded"></div>
+                                </div>
+                                <div class="flex-1 flex justify-end mx-4">
+                                    <div class="h-5 w-20 bg-slate-100 rounded"></div>
+                                </div>
+                                <div class="flex-1 flex justify-end mx-4">
+                                    <div class="flex flex-col items-end gap-1">
+                                        <div class="h-4 w-12 bg-slate-100 rounded"></div>
+                                        <div class="h-3 w-4 bg-slate-100 rounded"></div>
+                                    </div>
+                                </div>
+                                <div class="w-24 flex justify-end ml-4">
+                                    <div class="h-8 w-16 bg-slate-100 rounded-lg animate-pulse"></div>
+                                </div>
+                            </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -52,31 +129,49 @@
             <div class="grid grid-cols-1 gap-6">
                 <!-- Summary Card -->
                 <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                    <div class="flex flex-col sm:flex-row gap-8 sm:items-center">
-                        <div>
-                            <p class="text-slate-500 text-[13px] font-medium mb-0.5">Valor Total Portafolio</p>
-                            <h3 class="text-3xl font-black text-slate-900 tracking-tight">
-                                <app-rolling-number [value]="d.summary.totalValue || 0" suffix="€"></app-rolling-number>
-                            </h3>
-                        </div>
-                        <div class="hidden sm:block w-px h-12 bg-slate-200"></div>
-                        <div>
-                            <p class="text-slate-500 text-[13px] font-medium mb-0.5">Resultado Total</p>
-                            <div class="flex items-center gap-3">
-                                <h3 class="text-2xl font-bold tracking-tight"
-                                    [ngClass]="(d.summary.totalChangeValue || 0) >= 0 ? 'text-emerald-500' : 'text-rose-500'">
-                                    {{ (d.summary.totalChangeValue || 0) >= 0 ? '+' : '' }}{{ (d.summary.totalChangeValue || 0) |
-                                    currency:'EUR':'symbol':'1.2-2' }}
+                    <div class="flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between">
+                        <div class="flex flex-col sm:flex-row gap-8 sm:items-center">
+                            <div>
+                                <p class="text-slate-500 text-[13px] font-medium mb-0.5">Valor Total Portafolio</p>
+                                <h3 class="text-3xl font-black text-slate-900 tracking-tight">
+                                    <app-rolling-number [value]="d.summary.totalValue || 0"
+                                        suffix="€"></app-rolling-number>
                                 </h3>
-                                <div [ngClass]="(d.summary.totalChangePercent || 0) >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'"
-                                    class="flex items-center gap-1 font-black px-2 py-1 rounded text-[12px] shadow-sm">
-                                    <span class="material-symbols-outlined text-[16px]">
-                                        {{ (d.summary.totalChangePercent || 0) >= 0 ? 'trending_up' : 'trending_down' }}
-                                    </span>
-                                    <span>{{ (d.summary.totalChangePercent || 0) >= 0 ? '+' : '' }}{{ (d.summary.totalChangePercent || 0) | number:'1.2-2'
-                                        }}%</span>
+                            </div>
+                            <div class="hidden sm:block w-px h-12 bg-slate-200"></div>
+                            <div>
+                                <p class="text-slate-500 text-[13px] font-medium mb-0.5">Resultado Total</p>
+                                <div class="flex items-center gap-3">
+                                    <h3 class="text-2xl font-bold tracking-tight"
+                                        [ngClass]="(d.summary.totalChangeValue || 0) >= 0 ? 'text-emerald-500' : 'text-rose-500'">
+                                        {{ (d.summary.totalChangeValue || 0) >= 0 ? '+' : '' }}{{
+                                        (d.summary.totalChangeValue || 0) |
+                                        currency:'EUR':'symbol':'1.2-2' }}
+                                    </h3>
+                                    <div [ngClass]="(d.summary.totalChangePercent || 0) >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'"
+                                        class="flex items-center gap-1 font-black px-2 py-1 rounded text-[12px] shadow-sm">
+                                        <span class="material-symbols-outlined text-[16px]">
+                                            {{ (d.summary.totalChangePercent || 0) >= 0 ? 'trending_up' :
+                                            'trending_down' }}
+                                        </span>
+                                        <span>{{ (d.summary.totalChangePercent || 0) >= 0 ? '+' : '' }}{{
+                                            (d.summary.totalChangePercent || 0) | number:'1.2-2'
+                                            }}%</span>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Selectores de período Premium -->
+                        <div
+                            class="flex bg-slate-50 p-1 rounded-xl border border-slate-200 gap-1 overflow-x-auto no-scrollbar self-start lg:self-auto">
+                            @for (option of periodOptions; track option.value) {
+                            <button (click)="changePeriod(option.value)"
+                                [class]="selectedPeriod() === option.value ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
+                                {{ option.label }}
+                            </button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -88,8 +183,8 @@
                         Evolución del Portafolio
                     </h3>
                     <div class="h-64">
-                        <div echarts [options]="historyChartOption()" [loading]="isDashboardLoading()"
-                            theme="light" class="w-full h-full"></div>
+                        <div echarts [options]="historyChartOption()" [loading]="isDashboardLoading()" theme="light"
+                            class="w-full h-full"></div>
                     </div>
                 </div>
 
@@ -100,25 +195,26 @@
                             <span class="material-symbols-outlined text-primary">donut_large</span>
                             Distribución de Portafolio
                         </h3>
-                        
+
                         <!-- Category Filter Selector -->
-                        <div class="flex bg-slate-50 p-1 rounded-xl border border-slate-200 gap-1 overflow-x-auto no-scrollbar">
-                            <button (click)="setCategoryFilter('ALL')" 
+                        <div
+                            class="flex bg-slate-50 p-1 rounded-xl border border-slate-200 gap-1 overflow-x-auto no-scrollbar">
+                            <button (click)="setCategoryFilter('ALL')"
                                 [class]="selectedCategoryFilter() === 'ALL' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
                                 class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
                                 Todos
                             </button>
-                            <button (click)="setCategoryFilter(AssetClass.STOCK)" 
+                            <button (click)="setCategoryFilter(AssetClass.STOCK)"
                                 [class]="selectedCategoryFilter() === AssetClass.STOCK ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
                                 class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
                                 Acciones / ETFs
                             </button>
-                            <button (click)="setCategoryFilter(AssetClass.CRYPTO)" 
+                            <button (click)="setCategoryFilter(AssetClass.CRYPTO)"
                                 [class]="selectedCategoryFilter() === AssetClass.CRYPTO ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
                                 class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
                                 Criptomonedas
                             </button>
-                            <button (click)="setCategoryFilter(AssetClass.REAL_ESTATE)" 
+                            <button (click)="setCategoryFilter(AssetClass.REAL_ESTATE)"
                                 [class]="selectedCategoryFilter() === AssetClass.REAL_ESTATE ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'"
                                 class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
                                 Inmuebles
@@ -131,16 +227,15 @@
                         <div class="lg:col-span-5 flex flex-col items-center justify-center">
                             <div class="relative size-64">
                                 <div echarts [options]="donutChartOption()" [loading]="isDashboardLoading()"
-                                    (chartClick)="onDonutClick($event)"
-                                    theme="light" class="w-full h-full"></div>
+                                    (chartClick)="onDonutClick($event)" theme="light" class="w-full h-full"></div>
                                 <div
                                     class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                    <span
-                                        class="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                                    <span class="text-slate-400 text-[10px] font-black uppercase tracking-widest">
                                         {{ selectedCategoryFilter() === 'ALL' ? 'Total Portfolio' : 'Segment Value' }}
                                     </span>
                                     <span class="text-slate-900 text-2xl font-black mt-1">
-                                        <app-rolling-number [value]="filteredTotalValue()" suffix="€"></app-rolling-number>
+                                        <app-rolling-number [value]="filteredTotalValue()"
+                                            suffix="€"></app-rolling-number>
                                     </span>
                                 </div>
                             </div>
@@ -148,8 +243,8 @@
 
                         <!-- TreeMap Chart -->
                         <div class="lg:col-span-7 h-64">
-                            <div echarts [options]="treemapChartOption()" [loading]="isDashboardLoading()"
-                                theme="light" class="w-full h-full"></div>
+                            <div echarts [options]="treemapChartOption()" [loading]="isDashboardLoading()" theme="light"
+                                class="w-full h-full"></div>
                         </div>
                     </div>
                 </div>
@@ -191,21 +286,29 @@
                                         Activo</th>
                                     <th
                                         class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
-                                        Precio Actual</th>
+                                        Valor Unitario</th>
+                                    <th
+                                        class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                        Valor Medio de Compra</th>
+                                    <th
+                                        class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                        Número de Títulos</th>
                                     <th
                                         class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
                                         Valor Total</th>
                                     <th
                                         class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
-                                        Resultado</th>
+                                        Rendimiento</th>
+                                    <th
+                                        class="py-4 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50"
                                 [ngClass]="{'opacity-50 pointer-events-none': isAssetsLoading()}">
                                 @if (assetsPage(); as page) {
                                 @for (asset of page.content; track asset.id) {
-                                <tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer"
-                                    [ngClass]="{
+                                <tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer" [ngClass]="{
                                         'price-flash-up': asset.justUpdated === 'up',
                                         'price-flash-down': asset.justUpdated === 'down'
                                     }">
@@ -223,7 +326,8 @@
                                                     <span
                                                         class="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-1.5 py-0.5 rounded">{{
                                                         asset.subtitle }}</span>
-                                                    <span class="text-[10px] font-bold text-slate-400">{{ asset.portfolioPercentage
+                                                    <span class="text-[10px] font-bold text-slate-400">{{
+                                                        asset.portfolioPercentage
                                                         | number:'1.1-1' }}% del total</span>
                                                 </div>
                                             </div>
@@ -231,14 +335,32 @@
                                     </td>
                                     <td class="py-4 px-8 text-right">
                                         <p class="font-bold text-slate-900 text-sm transition-colors duration-300"
-                                           [ngClass]="{
+                                            [ngClass]="{
+                                               'price-text-up': asset.justUpdated === 'up',
+                                               'price-text-down': asset.justUpdated === 'down'
+                                           }">{{ asset.currentPrice | currency:'EUR':'symbol':'1.2-6' }}</p>
+                                    </td>
+                                    <td class="py-4 px-8 text-right">
+                                        <p class="font-bold text-slate-900 text-sm transition-colors duration-300"
+                                            *ngIf="asset.purchasePrice">
+                                            {{ asset.purchasePrice | currency:'EUR':'symbol':'1.2-6' }}
+                                        </p>
+                                        <p class="text-slate-400 font-bold" *ngIf="!asset.purchasePrice">-</p>
+                                    </td>
+                                    <td class="py-4 px-8 text-right">
+                                        <p class="font-bold text-slate-900 text-sm transition-colors duration-300">{{
+                                            asset.quantity | number:'1.2-6' }}</p>
+                                    </td>
+                                    <td class="py-4 px-8 text-right">
+                                        <p class="font-bold text-slate-900 text-sm transition-colors duration-300"
+                                            [ngClass]="{
                                                'price-text-up': asset.justUpdated === 'up',
                                                'price-text-down': asset.justUpdated === 'down'
                                            }">{{ asset.value |
                                             currency:'EUR':'symbol':'1.2-2' }}</p>
                                     </td>
                                     <td class="py-4 px-8 text-right">
-                                        <div class="flex flex-col items-end">
+                                        <div class="flex flex-col items-end" *ngIf="asset.iconType !== 'REAL_ESTATE'">
                                             <span
                                                 [ngClass]="asset.performance >= 0 ? 'text-emerald-500' : 'text-rose-500'"
                                                 class="text-sm font-black tracking-tight">
@@ -248,16 +370,25 @@
                                             <div class="flex items-center gap-1">
                                                 <span class="material-symbols-outlined text-[14px]"
                                                     [ngClass]="asset.trend === 'UP' ? 'text-emerald-400' : asset.trend === 'DOWN' ? 'text-rose-400' : 'text-slate-300'">
-                                                    {{ asset.trend === 'UP' ? 'trending_up' : asset.trend === 'DOWN' ? 'trending_down' : 'trending_flat' }}
+                                                    {{ asset.trend === 'UP' ? 'trending_up' : asset.trend === 'DOWN' ?
+                                                    'trending_down' : 'trending_flat' }}
                                                 </span>
                                             </div>
                                         </div>
+                                        <span *ngIf="asset.iconType === 'REAL_ESTATE'"
+                                            class="text-slate-400 font-bold text-sm block">-</span>
+                                    </td>
+                                    <td class="py-4 px-8 text-right w-24">
+                                        <button (click)="openSellModal(asset); $event.stopPropagation()"
+                                            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-black uppercase tracking-wider rounded-lg transition-colors">
+                                            Vender
+                                        </button>
                                     </td>
                                 </tr>
                                 }
                                 @if (page.content.length === 0) {
                                 <tr>
-                                    <td colspan="4" class="py-20 text-center">
+                                    <td colspan="7" class="py-20 text-center">
                                         <div
                                             class="size-16 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
                                             <span

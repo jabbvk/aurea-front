@@ -59,12 +59,15 @@
             </a>
 
             <!-- INGRESOS -->
-            <button (click)="comingSoonService.open('Ingresos')"
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-[background-color,color] duration-200 group border-l-4 border-white text-left w-full">
-                <span
-                    class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">payments</span>
-                <span class="text-[13px] font-medium">Ingresos</span>
-            </button>
+            <a routerLink="/incomes"
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg group border-l-4 transition-[background-color,color] duration-200"
+                [ngClass]="isActive('/incomes') 
+                    ? 'bg-primary/10 text-primary border-primary' 
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900 border-white'">
+                <span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform"
+                    [style.font-variation-settings]="isActive('/incomes') ? '\'FILL\' 1' : '\'FILL\' 0'">payments</span>
+                <span class="text-[13px]" [ngClass]="isActive('/incomes') ? 'font-bold' : 'font-medium'">Ingresos</span>
+            </a>
 
             <!-- GASTOS -->
             <button (click)="comingSoonService.open('Gastos')"

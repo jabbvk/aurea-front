@@ -1,0 +1,104 @@
+@if (modalService.isOpen()) {
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-panel">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+      <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">sell</span>
+        Vender Activo
+      </h3>
+      <button (click)="close()"
+        class="text-slate-400 hover:text-slate-600 transition-colors rounded-full p-1 hover:bg-slate-100">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6">
+      @if (modalService.selectedAsset(); as asset) {
+        <div class="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-4">
+          <div class="size-10 rounded-xl flex items-center justify-center shadow-sm border border-slate-100 bg-white"
+               [style.color]="asset.color">
+            <span class="material-symbols-outlined text-xl">sell</span>
+          </div>
+          <div>
+            <p class="font-bold text-slate-900 text-sm leading-tight">{{ asset.name }}</p>
+            @if (asset.iconType !== 'REAL_ESTATE') {
+              <p class="text-xs font-bold text-slate-500">{{ asset.quantity | number:'1.2-6' }} uds. disponibles</p>
+            }
+          </div>
+        </div>
+
+        <form [formGroup]="sellForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+          
+          <app-select
+            label="Cuenta de Destino (Opcional)"
+            placeholder="Seleccionar cuenta"
+            [options]="accountOptions"
+            [value]="sellForm.get('cashAccountId')?.value"
+            (valueChange)="sellForm.patchValue({cashAccountId: $event})">
+          </app-select>
+
+          @if (asset.iconType !== 'REAL_ESTATE') {
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-700">Cantidad a vender (Opcional)</label>
+                <span class="text-[10px] font-bold text-slate-400">Máx: {{ asset.quantity | number:'1.2-6' }}</span>
+              </div>
+              <input type="number" formControlName="quantity" min="0.000001" [max]="asset.quantity" step="any"
+                     placeholder="Vender todo"
+                     class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                     [ngClass]="{'border-rose-300 focus:border-rose-500 focus:ring-rose-500/20 bg-rose-50/50': sellForm.get('quantity')?.invalid && (sellForm.get('quantity')?.dirty || sellForm.get('quantity')?.touched)}">
+              
+              @if (sellForm.get('quantity')?.hasError('max') && (sellForm.get('quantity')?.dirty || sellForm.get('quantity')?.touched)) {
+                <p class="text-[10px] text-rose-500 font-medium leading-tight">La cantidad no puede superar los títulos disponibles.</p>
+              } @else if (sellForm.get('quantity')?.hasError('min') && (sellForm.get('quantity')?.dirty || sellForm.get('quantity')?.touched)) {
+                <p class="text-[10px] text-rose-500 font-medium leading-tight">La cantidad debe ser mayor a 0.</p>
+              } @else {
+                <p class="text-[10px] text-slate-500 leading-tight">Si lo dejas en blanco, se venderá el 100% de la posición.</p>
+              }
+            </div>
+          }
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-slate-700">
+              {{ asset.iconType === 'REAL_ESTATE' ? 'Precio de Venta Total' : 'Precio de Venta por Título (Opcional)' }}
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">€</span>
+              <input type="number" formControlName="sellPrice" min="0.01" step="0.01"
+                     [placeholder]="asset.iconType === 'REAL_ESTATE' ? 'Precio de venta' : 'Precio de mercado'"
+                     class="w-full pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+            </div>
+            @if (asset.iconType !== 'REAL_ESTATE') {
+              <p class="text-[10px] text-slate-500 leading-tight">Si lo dejas en blanco, se utilizará el precio de mercado actual.</p>
+            }
+          </div>
+
+        </form>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+      <button (click)="close()"
+        class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-white transition-colors focus:ring-2 focus:ring-slate-200">
+        Cancelar
+      </button>
+      <button (click)="onSubmit()"
+        [disabled]="isSubmitting || sellForm.invalid"
+        class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold shadow-lg shadow-primary/25 transition-all transform active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+        @if (isSubmitting) {
+          <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          Procesando...
+        } @else {
+          Vender
+        }
+      </button>
+    </div>
+  </div>
+</div>
+}

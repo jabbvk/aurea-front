@@ -1,12 +1,14 @@
 import { Component, inject, OnInit, signal, computed, DestroyRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { RegisterMovementModalService } from '../shared/register-movement-modal/register-movement-modal.service';
+import { SellAssetModalService } from '../shared/sell-asset-modal/sell-asset-modal.service';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { EChartsOption } from 'echarts';
 import { AssetService } from './services/asset.service';
-import { Asset, AssetClass, AssetDashboardResponse, AssetPageResponse } from './models/asset.model';
+import { Asset, AssetClass, AssetDashboardResponse, AssetPageResponse, PortfolioPeriod, PERIOD_OPTIONS, PerformancePoint } from './models/asset.model';
 import { finalize, debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -26,7 +28,11 @@ export class AssetDashboard implements OnInit {
   private readonly assetService = inject(AssetService);
   private readonly destroyRef = inject(DestroyRef);
   readonly modalService = inject(RegisterMovementModalService);
+  readonly sellAssetModalService = inject(SellAssetModalService);
   private readonly marketStream = inject(MarketStreamService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   private readonly flashTimers = new Map<string, any>();
 
   // Expose enum to template
@@ -35,14 +41,18 @@ export class AssetDashboard implements OnInit {
   // Selected category filter for distribution charts (ALL, STOCK, CRYPTO, REAL_ESTATE)
   readonly selectedCategoryFilter = signal<string>('ALL');
 
+  // Period Selection for Performance Chart
+  readonly selectedPeriod = signal<PortfolioPeriod>(PortfolioPeriod.ALL);
+  readonly periodOptions = PERIOD_OPTIONS;
+
   // Computed totals based on filter
   readonly filteredTotalValue = computed(() => {
     const data = this.dashboardData();
     if (!data) return 0;
-    
+
     const filter = this.selectedCategoryFilter();
     if (filter === 'ALL') return data.summary.totalValue;
-    
+
     return data.distribution.byCategory
       .find(c => c.name === filter)?.value || 0;
   });
@@ -50,10 +60,10 @@ export class AssetDashboard implements OnInit {
   readonly filteredTotalPercentage = computed(() => {
     const data = this.dashboardData();
     if (!data) return 0;
-    
+
     const filter = this.selectedCategoryFilter();
     if (filter === 'ALL') return 100;
-    
+
     return data.distribution.byCategory
       .find(c => c.name === filter)?.percentage || 0;
   });
@@ -78,7 +88,15 @@ export class AssetDashboard implements OnInit {
   readonly pageSize = signal(10);
 
   ngOnInit(): void {
-    this.fetchDashboard();
+    // Read period query parameter or default to 'all' (PortfolioPeriod.ALL)
+    const queryPeriod = this.route.snapshot.queryParamMap.get('period');
+    const initialPeriod = queryPeriod && Object.values(PortfolioPeriod).includes(queryPeriod as PortfolioPeriod)
+      ? (queryPeriod as PortfolioPeriod)
+      : PortfolioPeriod.ALL;
+
+    this.selectedPeriod.set(initialPeriod);
+
+    this.fetchDashboard(initialPeriod);
     this.fetchAssets();
 
     // Setup reactive search
@@ -103,12 +121,21 @@ export class AssetDashboard implements OnInit {
         this.fetchDashboard();
         this.fetchAssets();
       });
+
+    // Listen for sold assets
+    this.sellAssetModalService.assetSold$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.fetchDashboard();
+        this.fetchAssets();
+      });
   }
 
-  fetchDashboard(): void {
+  fetchDashboard(period?: PortfolioPeriod): void {
+    const activePeriod = period || this.selectedPeriod();
     this.isDashboardLoading.set(true);
     this.hasDashboardError.set(false);
-    this.assetService.getDashboard()
+    this.assetService.getDashboard(activePeriod)
       .pipe(finalize(() => this.isDashboardLoading.set(false)))
       .subscribe({
         next: (response) => {
@@ -133,6 +160,35 @@ export class AssetDashboard implements OnInit {
           console.error('Error fetching asset dashboard:', err);
           this.hasDashboardError.set(true);
         }
+      });
+  }
+
+  changePeriod(period: PortfolioPeriod): void {
+    if (period === this.selectedPeriod()) return;
+    this.selectedPeriod.set(period);
+
+    // Update query parameter in URL silently using Location to prevent full route reload/recreation
+    const urlTree = this.router.createUrlTree([], {
+      relativeTo: this.route,
+      queryParams: { period },
+      queryParamsHandling: 'merge'
+    });
+    this.location.go(urlTree.toString());
+
+    this.isDashboardLoading.set(true);
+    this.assetService.getPerformanceChart(period)
+      .pipe(finalize(() => this.isDashboardLoading.set(false)))
+      .subscribe({
+        next: (history) => {
+          const currentData = this.dashboardData();
+          if (currentData) {
+            this.dashboardData.set({
+              ...currentData,
+              performanceHistory: history
+            });
+          }
+        },
+        error: (err) => console.error('Error filtering performance chart:', err)
       });
   }
 
@@ -172,6 +228,10 @@ export class AssetDashboard implements OnInit {
       });
   }
 
+  openSellModal(asset: Asset): void {
+    this.sellAssetModalService.open(asset);
+  }
+
   private handlePriceUpdate(update: PriceUpdate): void {
     // 1. Update the assets in the current page
     this.assetsPage.update(page => {
@@ -191,11 +251,21 @@ export class AssetDashboard implements OnInit {
           // Determine flash color
           const flashDirection = update.price > (asset.currentPrice || 0) ? 'up' : 'down';
 
+          // Recalculate performance if purchasePrice is defined and greater than zero
+          let newPerformance = asset.performance;
+          let newTrend = asset.trend;
+          if (asset.purchasePrice && asset.purchasePrice > 0) {
+            newPerformance = ((update.price - asset.purchasePrice) / asset.purchasePrice) * 100;
+            newTrend = newPerformance > 0 ? 'UP' : newPerformance < 0 ? 'DOWN' : 'STABLE';
+          }
+
           // Create updated asset
           const updatedAsset: Asset = {
             ...asset,
             currentPrice: update.price,
             value: newTotalValue,
+            performance: newPerformance,
+            trend: newTrend,
             justUpdated: flashDirection
           };
 
@@ -217,7 +287,7 @@ export class AssetDashboard implements OnInit {
         return asset;
       });
 
-      // 2. Update Dashboard Summary and Distribution if there's a delta
+      // 2. Update Dashboard Summary, Distribution, and Live Chart Point if there's a delta
       if (deltaValue !== 0) {
         this.dashboardData.update(data => {
           if (!data) return data;
@@ -255,6 +325,26 @@ export class AssetDashboard implements OnInit {
             return { ...dc, percentage: newPercentage };
           });
 
+          // Update the last point in performance history to match the live portfolio value (Today's Valuation)
+          let newHistory = data.performanceHistory;
+          if (newHistory && newHistory.length > 0) {
+            const lastIndex = newHistory.length - 1;
+            const lastPoint = newHistory[lastIndex];
+
+            const updatedLastPoint: PerformancePoint = {
+              ...lastPoint,
+              value: newTotalValue,
+              invested: data.summary.investedAmount,
+              nominalReturn: newTotalChangeValue,
+              percentageReturn: newTotalChangePercent
+            };
+
+            newHistory = [
+              ...newHistory.slice(0, lastIndex),
+              updatedLastPoint
+            ];
+          }
+
           return {
             ...data,
             summary: {
@@ -263,6 +353,7 @@ export class AssetDashboard implements OnInit {
               totalChangeValue: newTotalChangeValue,
               totalChangePercent: newTotalChangePercent
             },
+            performanceHistory: newHistory,
             distribution: {
               byAsset: newByAsset,
               byCategory: newByCategory
@@ -399,11 +490,38 @@ export class AssetDashboard implements OnInit {
       tooltip: {
         trigger: 'axis',
         backgroundColor: '#1e293b',
-        borderColor: '#1e293b',
+        borderColor: '#334155',
+        borderWidth: 1,
+        padding: [10, 14],
         textStyle: { color: '#fff' },
         formatter: (params: any) => {
           const p = params[0];
-          return `${p.name}<br/><b>${p.value.toLocaleString()}€</b>`;
+          // Buscamos el punto completo en la lista usando el dataIndex de ECharts
+          const item = history[p.dataIndex];
+          if (!item) {
+            return `${p.name}<br/><b>${p.value.toLocaleString()}€</b>`;
+          }
+
+          const returnVal = item.nominalReturn ?? 0;
+          const returnPct = item.percentageReturn ?? 0;
+          const isProfit = returnVal >= 0;
+          const returnColor = isProfit ? '#10b981' : '#ef4444'; // Verde esmeralda o Rojo carmín
+          const sign = isProfit ? '+' : '';
+
+          return `
+            <div style="font-family: inherit; font-size: 12px; line-height: 1.6;">
+              <span style="color: #94a3b8; font-size: 11px; display: block; margin-bottom: 4px;">${p.name}</span>
+              <span style="display: block;">
+                <b>Valor Cartera:</b> ${item.value.toLocaleString('es-ES', { minimumFractionDigits: 2 })}€
+              </span>
+              <span style="color: #cbd5e1; display: block; font-size: 11px;">
+                Invertido: ${item.invested ? item.invested.toLocaleString('es-ES', { minimumFractionDigits: 2 }) + '€' : '0,00€'}
+              </span>
+              <span style="color: ${returnColor}; font-weight: 600; display: block; margin-top: 4px; font-size: 12px;">
+                Retorno: ${sign}${returnVal.toLocaleString('es-ES', { minimumFractionDigits: 2 })}€ (${sign}${returnPct.toFixed(2)}%)
+              </span>
+            </div>
+          `;
         }
       },
       grid: {
@@ -431,14 +549,14 @@ export class AssetDashboard implements OnInit {
         type: 'line',
         smooth: true,
         symbol: 'none',
-        lineStyle: { width: 3, color: '#3b82f6' },
+        lineStyle: { width: 3, color: '#3b82f6' }, // Línea azul de tendencia
         areaStyle: {
           color: {
             type: 'linear',
             x: 0, y: 0, x2: 0, y2: 1,
             colorStops: [
               { offset: 0, color: 'rgba(59, 130, 246, 0.2)' },
-              { offset: 1, color: 'rgba(59, 130, 246, 0)' }
+              { offset: 1, color: 'rgba(59, 130, 246, 0.0)' }
             ]
           }
         }
@@ -498,7 +616,7 @@ export class AssetDashboard implements OnInit {
   });
 
   private adjustColor(hex: string, amount: number): string {
-    return '#' + hex.replace(/^#/, '').replace(/../g, hex => 
+    return '#' + hex.replace(/^#/, '').replace(/../g, hex =>
       ('0' + Math.min(255, Math.max(0, parseInt(hex, 16) + amount)).toString(16)).slice(-2));
   }
 

@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { ActionButton } from '../shared/action-button/action-button';
@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { inject, OnInit } from '@angular/core';
 import { RegisterMovementModalService } from '../shared/register-movement-modal/register-movement-modal.service';
 import { EmergencyFundService, EmergencyFundStatus, CalculationMode } from './services/emergency-fund.service';
+import { InfoModalService } from '../shared/info-modal/info-modal.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-emergency-fund',
@@ -15,6 +17,8 @@ import { EmergencyFundService, EmergencyFundStatus, CalculationMode } from './se
 export class EmergencyFund implements OnInit {
   readonly modalService = inject(RegisterMovementModalService);
   private readonly fundService = inject(EmergencyFundService);
+  private readonly infoModalService = inject(InfoModalService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // State signals
   readonly calculationMode = signal<CalculationMode>('VARIABLE');
@@ -28,6 +32,13 @@ export class EmergencyFund implements OnInit {
 
   ngOnInit(): void {
     this.loadFundStatus();
+
+    // Listen for new movements/transfers and reload the entire view
+    this.modalService.movementRegistered$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadFundStatus();
+      });
   }
 
   private loadFundStatus() {
@@ -52,9 +63,16 @@ export class EmergencyFund implements OnInit {
     const newValue = !this.fundActive();
     this.fundActive.set(newValue);
     this.fundService.updateConfig({ fundActive: newValue }).subscribe({
-      error: () => {
+      error: (err) => {
         // Rollback if error
         this.fundActive.set(!newValue);
+        
+        // Show modal if it's the specific validation error
+        if (err.error?.message === "No puedes desactivar el fondo de emergencia porque aún tiene saldo. Por favor, transfiere los fondos a otra cuenta primero.") {
+          this.infoModalService.open('Acción no permitida', err.error.message);
+        } else {
+          this.infoModalService.open('Error', 'Ha ocurrido un error al actualizar la configuración.');
+        }
       }
     });
   }

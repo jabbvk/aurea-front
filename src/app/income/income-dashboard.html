@@ -1,0 +1,368 @@
+<div class="bg-background-light text-slate-900 font-display transition-colors duration-200 no-scroll-layout flex h-screen w-full overflow-hidden">
+  <app-sidebar></app-sidebar>
+  <app-edit-recurring-modal></app-edit-recurring-modal>
+
+  <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-background-light">
+    <!-- Header -->
+    <header class="sticky top-0 z-20 flex items-center justify-between px-8 py-6 bg-background-light/95 backdrop-blur-sm">
+      <div class="flex items-center gap-4">
+        <!-- Selector de meses premium -->
+        <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-1 shadow-sm h-[38px]">
+          <button 
+            (click)="prevMonth()"
+            class="p-1 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-primary transition-all flex items-center justify-center h-full w-8"
+            title="Mes anterior"
+          >
+            <span class="material-symbols-outlined text-lg leading-none">chevron_left</span>
+          </button>
+          
+          <div class="relative px-3 flex items-center h-full min-w-[130px] justify-center">
+            <span class="text-xs font-black text-slate-800 uppercase tracking-wider">
+              {{ activeMonthName() }} {{ activeYear() }}
+            </span>
+          </div>
+          
+          <button 
+            (click)="nextMonth()"
+            [disabled]="isMaxMonth()"
+            class="p-1 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-primary transition-all disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center h-full w-8"
+            title="Mes siguiente"
+          >
+            <span class="material-symbols-outlined text-lg leading-none">chevron_right</span>
+          </button>
+        </div>
+
+        <!-- Selector rápido desplegable usando el componente común app-select -->
+        <div class="month-select flex items-center h-[38px] w-44">
+          <app-select 
+            [options]="monthSelectOptions()" 
+            [value]="activeMonth()" 
+            (valueChange)="onMonthSelectValueChange($event)"
+            placeholder="Seleccionar mes"
+          ></app-select>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <app-action-button 
+          label="Registrar ingreso" 
+          [disabled]="isLoading()" 
+          (action)="modalService.open('income', true, 'income')"
+        ></app-action-button>
+      </div>
+    </header>
+
+    <!-- Main Content Scroll Container -->
+    <div class="flex-1 px-6 pb-6 pt-4 overflow-y-auto overflow-x-hidden flex flex-col gap-4">
+      @if (isLoading()) {
+        <!-- Skeleton Loader similar al resto de vistas -->
+        <div class="space-y-4 animate-pulse mt-4">
+          <!-- KPI Cards Skeleton -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            @for (i of [1,2,3]; track i) {
+              <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm h-[116px] flex flex-col justify-between">
+                <div class="space-y-2">
+                  <div class="h-3 w-24 bg-slate-200 rounded"></div>
+                  <div class="h-8 w-36 bg-slate-200 rounded"></div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Content Skeletons -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            @for (card of [1,2]; track card) {
+              <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm min-h-[400px] flex flex-col gap-4">
+                <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                  <div class="h-4 w-40 bg-slate-200 rounded"></div>
+                  <div class="h-8 w-8 rounded-full bg-slate-100"></div>
+                </div>
+                <div class="space-y-4 flex-1">
+                  @for (row of [1,2,3]; track row) {
+                    <div class="h-16 bg-slate-50 border border-slate-100 rounded-lg"></div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <!-- Panel Principal de KPIs con números siempre en negro -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Total Ingresos Estimados -->
+          <article class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between transition-all duration-300 hover:shadow-md">
+            <div>
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ingresos Estimados</p>
+              <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                <app-rolling-number [value]="totalIncomes()" suffix="€"></app-rolling-number>
+              </h3>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2 font-medium italic">Suma de cobrados + pendientes</p>
+          </article>
+
+          <!-- Ingresos Cobrados -->
+          <article class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between transition-all duration-300 hover:shadow-md">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Cobrado</p>
+                <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                  <app-rolling-number [value]="collectedAmount()" suffix="€"></app-rolling-number>
+                </h3>
+              </div>
+              <div class="h-8 w-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">check_circle</span>
+              </div>
+            </div>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-3">
+              <div 
+                class="bg-emerald-500 h-full rounded-full transition-all duration-500" 
+                [style.width.%]="percentCollected()"
+              ></div>
+            </div>
+          </article>
+
+          <!-- Pendiente por Cobrar -->
+          <article class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between transition-all duration-300 hover:shadow-md relative overflow-hidden">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Pendiente por Cobrar</p>
+                <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                  <app-rolling-number [value]="pendingRecurringAmount()" suffix="€"></app-rolling-number>
+                </h3>
+              </div>
+              <div class="h-8 w-8 rounded-full flex items-center justify-center transition-colors bg-slate-50 text-slate-400" [ngClass]="{'bg-amber-50 text-amber-500': pendingRecurringAmount() > 0}">
+                <span class="material-symbols-outlined text-lg">{{ pendingRecurringAmount() > 0 ? 'schedule' : 'done_all' }}</span>
+              </div>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2 font-medium">De ingresos recurrentes este mes</p>
+          </article>
+        </section>
+
+        <!-- Sección de Listados: Recurrentes vs Registro Completo -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-4">
+          
+          <!-- Tarjeta 1: Ingresos Recurrentes (Automatizados) -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col min-h-[460px] overflow-hidden">
+            <!-- Cabecera -->
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white z-10">
+              <div class="flex items-center gap-2.5">
+                <div class="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                  <span class="material-symbols-outlined text-lg">event_repeat</span>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-slate-800 leading-tight">Ingresos Recurrentes</h4>
+                  <p class="text-[10px] text-slate-400 font-medium">Planificaciones automáticas</p>
+                </div>
+              </div>
+              
+              <div class="relative group">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                <input 
+                  type="text" 
+                  placeholder="Buscar recurrente..." 
+                  [value]="searchRecurringQuery()"
+                  (input)="onSearchRecurring($event)"
+                  class="pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl text-[11px] font-bold text-slate-900 focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/5 outline-none transition-all w-40"
+                />
+              </div>
+            </div>
+
+            <!-- Contenido -->
+            <div class="flex-1 overflow-y-auto relative min-h-[300px]">
+              @if (paginatedRecurringIncomes().length === 0) {
+                <div class="flex flex-col items-center justify-center py-20 text-center">
+                  <div class="size-16 rounded-3xl bg-slate-50 flex items-center justify-center mx-auto mb-4 transform rotate-6">
+                    <span class="material-symbols-outlined text-slate-200 text-3xl">event_repeat</span>
+                  </div>
+                  <p class="text-slate-800 font-black text-sm">Sin resultados</p>
+                  <p class="text-slate-400 text-[11px] mt-1 max-w-[200px] leading-normal">No hay ingresos recurrentes cargados que coincidan.</p>
+                </div>
+              } @else {
+                <div class="divide-y divide-slate-50">
+                  @for (item of paginatedRecurringIncomes(); track item.id) {
+                    <div class="px-8 py-3 hover:bg-slate-50 transition-all duration-300 flex items-center justify-between gap-6 group border-b border-slate-50 last:border-0">
+                      <div class="flex items-center gap-5">
+                        <div>
+                          <div class="flex items-center gap-2">
+                            <p class="text-[13px] font-black text-slate-900 leading-tight">{{ item.source }}</p>
+                            <!-- Estado Activo/Inactivo -->
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full" [ngClass]="item.active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'">
+                              {{ item.active ? 'Activo' : 'Pausado' }}
+                            </span>
+                          </div>
+                          <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ getFrequencyLabel(item.frequency) }}</span>
+                            <span class="size-1 rounded-full bg-slate-200"></span>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Próx: {{ item.nextExecutionDate | date:'dd MMM, yyyy' }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center gap-4">
+                        <div class="text-right">
+                          <span class="text-[17px] font-black tracking-tighter text-slate-900">{{ item.amount | currency:'EUR':'symbol':'1.2-2' }}</span>
+                        </div>
+
+                        <!-- Botón Interactividad Cobrar y Editar -->
+                        <div class="flex items-center gap-2">
+                          <button 
+                            (click)="openEditRecurringModal(item)"
+                            class="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-colors"
+                            title="Editar recurrente"
+                          >
+                            <span class="material-symbols-outlined text-sm">edit</span>
+                          </button>
+                          
+                          @if (item.active) {
+                            <button 
+                              (click)="cobrarIngresoRecurrente(item.id)"
+                              class="px-2.5 py-1.5 rounded-lg bg-primary text-white text-[10px] font-bold shadow-sm shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                            >
+                              Forzar Cobro
+                            </button>
+                          } @else {
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-400 text-[10px] font-bold">
+                              Pausado
+                            </span>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Footer Paginación -->
+            <div class="p-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                {{ filteredRecurringIncomes().length }} planificaciones
+              </span>
+              
+              <div class="flex items-center gap-1.5">
+                <button 
+                  (click)="changePageRecurring(currentPageRecurring() - 1)"
+                  [disabled]="currentPageRecurring() === 0"
+                  class="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-primary/30 hover:text-primary transition-all disabled:opacity-30 disabled:pointer-events-none"
+                >
+                  <span class="material-symbols-outlined text-base leading-none">chevron_left</span>
+                </button>
+                
+                <span class="text-[10px] font-bold text-slate-700">
+                  {{ currentPageRecurring() + 1 }} / {{ totalPagesRecurring() }}
+                </span>
+
+                <button 
+                  (click)="changePageRecurring(currentPageRecurring() + 1)"
+                  [disabled]="currentPageRecurring() >= totalPagesRecurring() - 1"
+                  class="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-primary/30 hover:text-primary transition-all disabled:opacity-30 disabled:pointer-events-none"
+                >
+                  <span class="material-symbols-outlined text-base leading-none">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta 2: Registro de Ingresos (Historial de todos los cobrados en el mes) -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col min-h-[460px] overflow-hidden">
+            <!-- Cabecera -->
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white z-10">
+              <div class="flex items-center gap-2.5">
+                <div class="h-8 w-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-lg">history</span>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-slate-800 leading-tight">Registro de Ingresos</h4>
+                  <p class="text-[10px] text-slate-400 font-medium">Historial completo del mes</p>
+                </div>
+              </div>
+              
+              <div class="relative group">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                <input 
+                  type="text" 
+                  placeholder="Buscar en registro..." 
+                  [value]="searchHistoryQuery()"
+                  (input)="onSearchHistory($event)"
+                  class="pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl text-[11px] font-bold text-slate-900 focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/5 outline-none transition-all w-40"
+                />
+              </div>
+            </div>
+
+            <!-- Contenido -->
+            <div class="flex-1 overflow-y-auto relative min-h-[300px]">
+              @if (paginatedHistoryIncomes().length === 0) {
+                <div class="flex flex-col items-center justify-center py-20 text-center">
+                  <div class="size-16 rounded-3xl bg-slate-50 flex items-center justify-center mx-auto mb-4 transform rotate-6">
+                    <span class="material-symbols-outlined text-slate-200 text-3xl">receipt_long</span>
+                  </div>
+                  <p class="text-slate-800 font-black text-sm">Sin movimientos registrados</p>
+                  <p class="text-slate-400 text-[11px] mt-1 max-w-[200px] leading-normal">No hay cobros recurrentes ni puntuales para este periodo.</p>
+                </div>
+              } @else {
+                <div class="divide-y divide-slate-50">
+                  @for (item of paginatedHistoryIncomes(); track item.id) {
+                    <div class="px-8 py-3 hover:bg-slate-50 transition-all duration-300 flex items-center justify-between gap-6 group border-b border-slate-50 last:border-0">
+                      <div class="flex items-center gap-5">
+                        <div>
+                          <div class="flex items-center gap-2">
+                            <span class="text-xs font-black text-slate-800 transition-colors block" [ngClass]="item.frequency !== 'ONE_TIME' ? 'group-hover:text-primary' : 'group-hover:text-emerald-600'">{{ item.source }}</span>
+                            <!-- Etiqueta de tipo Recurrente/Puntual -->
+                            <span class="text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider" [ngClass]="item.frequency !== 'ONE_TIME' ? 'bg-indigo-50 text-indigo-700' : 'bg-teal-50 text-teal-700'">
+                              {{ item.frequency !== 'ONE_TIME' ? 'Recurrente' : 'Puntual' }}
+                            </span>
+                          </div>
+                          <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ item.date | date:'dd MMM, yyyy' }}</span>
+                            @if (item.description) {
+                              <span class="size-1 rounded-full bg-slate-200"></span>
+                              <span class="text-[9px] font-bold text-slate-400 truncate max-w-[150px] block" [title]="item.description">{{ item.description }}</span>
+                            }
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="text-right shrink-0">
+                        <span class="text-[17px] font-black tracking-tighter text-emerald-500">+{{ item.amount | currency:'EUR':'symbol':'1.2-2' }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Footer Paginación -->
+            <div class="p-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                {{ totalHistoryElements() }} movimientos
+              </span>
+              
+              <div class="flex items-center gap-1.5">
+                <button 
+                  (click)="changePageHistory(currentPageHistory() - 1)"
+                  [disabled]="currentPageHistory() === 0"
+                  class="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-primary/30 hover:text-primary transition-all disabled:opacity-30 disabled:pointer-events-none"
+                >
+                  <span class="material-symbols-outlined text-base leading-none">chevron_left</span>
+                </button>
+                
+                <span class="text-[10px] font-bold text-slate-700">
+                  {{ currentPageHistory() + 1 }} / {{ totalPagesHistory() }}
+                </span>
+
+                <button 
+                  (click)="changePageHistory(currentPageHistory() + 1)"
+                  [disabled]="currentPageHistory() >= totalPagesHistory() - 1"
+                  class="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-primary/30 hover:text-primary transition-all disabled:opacity-30 disabled:pointer-events-none"
+                >
+                  <span class="material-symbols-outlined text-base leading-none">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+  </main>
+</div>

@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { ActionButton } from '../shared/action-button/action-button';
 import { RegisterMovementModalService } from '../shared/register-movement-modal/register-movement-modal.service';
 import { CashService, CashAccount, CashMovement } from './services/cash.service';
 import { finalize, forkJoin, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ErrorState } from '../shared/error-state/error-state';
 
@@ -27,11 +28,74 @@ import { ErrorState } from '../shared/error-state/error-state';
 
         <div class="flex-1 px-6 pb-6 pt-4 overflow-y-auto overflow-x-hidden flex flex-col gap-4">
           @if (isInitialLoading()) {
-            <div class="space-y-8 animate-pulse mt-4">
-               <div class="h-32 bg-white rounded-3xl border border-slate-200"></div>
-               <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                 <div class="h-64 bg-white rounded-3xl border border-slate-200"></div>
-                 <div class="lg:col-span-2 h-64 bg-white rounded-3xl border border-slate-200"></div>
+            <div class="space-y-4 animate-pulse mt-4">
+               <!-- Header Card Skeleton -->
+               <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center justify-between h-[116px]">
+                  <div class="flex flex-col gap-2">
+                     <div class="h-3 w-32 bg-slate-200 rounded"></div>
+                     <div class="flex items-center gap-3">
+                         <div class="h-10 w-48 bg-slate-200 rounded"></div>
+                         <div class="h-5 w-24 bg-slate-100 rounded-full"></div>
+                     </div>
+                     <div class="h-2 w-48 bg-slate-100 rounded mt-1"></div>
+                  </div>
+                  <div class="flex gap-3">
+                     <div class="h-16 w-24 bg-slate-100 rounded-xl"></div>
+                  </div>
+               </div>
+
+               <!-- Grid Skeleton -->
+               <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <!-- Cuentas Skeleton -->
+                  <div class="lg:col-span-1 bg-white rounded-xl border border-slate-200 p-5 shadow-sm h-full flex flex-col min-h-[300px]">
+                     <div class="flex justify-between items-start mb-4">
+                        <div class="h-3 w-32 bg-slate-200 rounded"></div>
+                        <div class="h-8 w-8 rounded-full bg-slate-200"></div>
+                     </div>
+                     <div class="space-y-3 mt-2">
+                        @for (i of [1,2,3]; track i) {
+                        <div class="p-3 rounded-lg border border-slate-100 bg-slate-50 flex justify-between items-center h-12">
+                           <div class="h-3 w-24 bg-slate-200 rounded"></div>
+                           <div class="h-3 w-16 bg-slate-200 rounded"></div>
+                        </div>
+                        }
+                     </div>
+                  </div>
+
+                  <!-- Movimientos Skeleton -->
+                  <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm h-full flex flex-col overflow-hidden min-h-[500px]">
+                     <div class="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
+                        <div class="h-4 w-40 bg-slate-200 rounded"></div>
+                        <div class="flex items-center gap-3">
+                           <div class="h-9 w-64 bg-slate-100 rounded-xl border border-slate-200"></div>
+                           <div class="h-8 w-8 rounded-full bg-slate-100"></div>
+                        </div>
+                     </div>
+                     <div class="flex-1 p-0 overflow-y-auto">
+                        <div class="divide-y divide-slate-50">
+                           @for (i of [1,2,3,4,5,6]; track i) {
+                           <div class="px-8 py-4 flex items-center justify-between gap-6 hover:bg-slate-50 transition-colors">
+                              <div class="flex items-center gap-5">
+                                 <div class="flex-1 flex flex-col gap-2">
+                                    <div class="h-4 w-48 bg-slate-200 rounded"></div>
+                                    <div class="flex items-center gap-2">
+                                       <div class="h-2 w-16 bg-slate-200 rounded"></div>
+                                       <div class="h-2 w-16 bg-slate-100 rounded"></div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="text-right">
+                                 <div class="h-5 w-24 bg-slate-200 rounded ml-auto"></div>
+                              </div>
+                           </div>
+                           }
+                        </div>
+                     </div>
+                     <div class="p-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+                        <div class="h-3 w-24 bg-slate-200 rounded"></div>
+                        <div class="h-8 w-40 bg-slate-100 rounded-lg"></div>
+                     </div>
+                  </div>
                </div>
             </div>
           } @else if (hasError()) {
@@ -42,7 +106,7 @@ import { ErrorState } from '../shared/error-state/error-state';
             
             <section class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center justify-between transition-all duration-500" [class.opacity-50]="isHistoryLoading()">
               <div class="flex flex-col">
-                <p class="text-[13px] font-semibold text-slate-500 mb-0.5">Liquidez Total Disponible</p>
+                <p class="text-[13px] font-semibold text-slate-500 mb-0.5">Liquidez Total</p>
                 <div class="flex items-center gap-3">
                   <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
                     {{ totalBalance() | currency:'EUR':'symbol':'1.2-2' }}
@@ -52,7 +116,7 @@ import { ErrorState } from '../shared/error-state/error-state';
                     Sincronizado
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-400 mt-1 font-medium italic">Suma total de todas tus cuentas bancarias y efectivo</p>
+                <p class="text-[11px] text-slate-400 mt-1 font-medium italic">Suma total de todas tus cuentas bancarias</p>
               </div>
               
               <div class="flex gap-3">
@@ -199,12 +263,13 @@ import { ErrorState } from '../shared/error-state/error-state';
 export class CashDashboard implements OnInit {
   private readonly cashService = inject(CashService);
   readonly modalService = inject(RegisterMovementModalService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly accounts = signal<CashAccount[]>([]);
   readonly history = signal<CashMovement[]>([]);
   readonly searchQuery = signal('');
   private readonly searchSubject = new Subject<string>();
-  
+
   // Loading states
   readonly isInitialLoading = signal(true);
   readonly isHistoryLoading = signal(false);
@@ -222,14 +287,17 @@ export class CashDashboard implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
-    
-    this.modalService.movementRegistered$.subscribe(() => {
-      this.loadData(true); // Refresh without full skeleton
-    });
+
+    this.modalService.movementRegistered$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadData(false); // Refresh the entire view showing all skeletons
+      });
 
     this.searchSubject.pipe(
       debounceTime(300),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe(query => {
       this.searchQuery.set(query);
       this.currentPage.set(0); // Reset to first page on new search
@@ -250,7 +318,7 @@ export class CashDashboard implements OnInit {
   loadData(isPartial = false): void {
     if (!isPartial) this.isInitialLoading.set(true);
     else this.isHistoryLoading.set(true);
-    
+
     this.hasError.set(false);
 
     forkJoin({
